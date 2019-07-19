@@ -1,0 +1,25 @@
+<div class="waypoint">
+    <div class="col-md-6 float-left">
+        <input style="display: none" name="q-col">
+        <div class="md-form">
+            <input type="text" id="q_address-{{ id }}" name="q_address-{{ id }}"
+                   second_name="q_address" class="form-control">
+            <label for="q_address-{{ id }}">Адрес</label>
+        </div>
+        <input type="text" style="display: none" name="sh-{{ id }}">
+        <input type="text" style="display: none" name="dl-{{ id }}">
+    </div>
+    <div class="col-md-6 float-left">
+        <div class="md-form">
+            <input type="text" id="q_code-{{ id }}" name="q_code-{{ id }}" class="form-control">
+            <label for="q_code-{{ id }}">Правильный ответ</label>
+        </div>
+    </div>
+    <div class="col-md-12 float-left">
+        <div class="md-form">
+            <textarea type="text" id="q_description-{{ id }}"
+                      name="q_description-{{ id }}" class="md-textarea"></textarea>
+            <label for="q_description-{{ id }}">Подсказка</label>
+        </div>
+    </div>
+</div>

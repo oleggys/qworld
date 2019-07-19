@@ -1,0 +1,20 @@
+<div class="group_waypoint">
+    <input style="display: none" name="q-col-{{ group_id }}">
+    <div class="md-form">
+        <input type="text" id="q_address-{{ group_id }}-{{ waypoint_id }}" name="q_address-{{ group_id }}-{{ waypoint_id }}"
+               second_name='q_address' class="form-control">
+        <label for="q_address-{{ id_1 }}-{{ waypoint_id }}">Адрес</label>
+    </div>
+    <input type="text" style="display: none" name="sh-{{ group_id }}-{{ waypoint_id }}">
+    <input type="text" style="display: none" name="dl-{{ group_id }}-{{ waypoint_id }}">
+    <div class="md-form">
+        <input type="text" id="q_code-{{ group_id }}-{{ waypoint_id }}"
+               name="q_code-{{ group_id }}-{{ waypoint_id }}" class="form-control">
+        <label for="q_code-{{ group_id }}-{{ waypoint_id }}">Правильный ответ</label>
+    </div>
+    <div class="md-form">
+        <textarea type="text" id="q_description-{{ group_id }}-{{ waypoint_id }}"
+                  name="q_description-{{ group_id }}-{{ waypoint_id }}" class="md-textarea"></textarea>
+        <label for="q_description-{{ group_id }}-{{ waypoint_id }}">Подсказка</label>
+    </div>
+</div>

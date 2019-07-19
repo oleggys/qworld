@@ -1,0 +1,99 @@
+{% extends 'qworld/base.html' %}
+
+{% block title %}
+Оплата - {{ quest.name }}
+{% endblock %}
+{% block content %}
+<div class="col-lg-12">
+<div class="card z-depth-1 mb-r mt-2 w-100 p-2 pl-4 pr-4">
+    <div class="row">
+        <div class="col-md-6">
+            <h4 class="h4-responsive mt-1">Платёж #{{ pay_number }}</h4>
+        </div>
+        <div class="col-md-3 mb-0 text-right">
+            <input type="text" id="discount" class="form-control mb-1" placeholder="Скидочный купон">
+        </div>
+        <div class="col-md-3 text-right">
+
+            <a class="btn btn-second" id="pay" data-toggle="modal" data-target="#pay_form">Оплатить сейчас</a>
+        </div>
+    </div>
+
+</div>
+<section class="card p-3 mb-2" id="receipt">
+    <div class="col-md-12">
+        <div class="row invoice-data">
+            <h4 class="h4-responsive w-100 text-right"><small>Платёж №</small><br><strong><span class="blue-text" id="pay_number">#{{ pay_number }}</span></strong></h4>
+            <div class="col-6 pr-0">
+                <p><small>от:</small></p>
+                <p><strong>qWorld.ru</strong></p>
+                <p><strong>Дата оплаты:</strong> {{ now|date }}</p>
+                <p><strong>Дата создания:</strong> {{ quest.creation_time|date }}</p>
+            </div>
+            <div class="col-6 text-right pl-0">
+                <p><small>Для:</small></p>
+                <p><strong>{{ auth_user.firstname }} {{ auth_user.lastname }}<br> {{ auth_user.middlename }}</strong></p>
+                <p>{{ auth_user.email }}</p>
+            </div>
+
+        </div>
+
+        <div class="row mt-2">
+            <div class="col-md-12">
+                <div class="table-responsive">
+
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Квест</th>
+                                <th>Скидка</th>
+                                <th>Цена</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{{ quest.name }}</td>
+                                <td id="discount_per">0%</td>
+                                <td>600 руб</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-2">
+            <div class="col-md-3 float-md-right ml-auto">
+                <ul class="striped">
+                    <li><strong>Скидка:</strong><span class="float-right" id="discount_rub">0 руб</span></li>
+                    <li><strong>ИТОГ:</strong><span class="float-right" id="itog">600 руб</span></li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+</div>
+<div class="modal fade in" id="pay_form" tabindex="-1" role="dialog"
+                            aria-labelledby="pay_form" style="padding-right: 0!important;">
+    <div class="modal-dialog modal-sm" role="document" id="pay_form_cont">
+    </div>
+</div>
+    <script>
+    function pay(){
+        $(document).ready(function(){
+            $('a#pay').on('click', function(){
+                code = $('input#discount').val();
+                pay_number = $('#pay_number').text();
+                $.post('pay/',{code:code,pay_number:pay_number},function(data){
+                        $('#pay_form_cont').empty();
+                        $('#pay_form_cont').append(data);
+                });
+            })
+        })
+    }
+    </script>
+    <script>check_code();pay();</script>
+{% endblock %}

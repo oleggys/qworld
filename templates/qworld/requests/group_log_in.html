@@ -1,0 +1,119 @@
+{% if group_completed %}
+    <div class="col-lg-12 mt-2">
+        <div class="card p-4 text-center">
+            <div class="text-warning mb-1" style="opacity: 0.6; font-size: 2rem">
+                <i class="fa fa-ban fa-5x" aria-hidden="true"></i>
+            </div>
+            <div style="opacity: 0.5; font-size: 1.2rem" class="mb-1">
+                Ваша группа завершила квест: <strong>{{ quest.name }}</strong>.<br>
+                Результат вашей группы: <strong>{{ result }}%</strong>.<br>
+                Квест закончится: <strong>{{ quest.end_date_time }}</strong>.<br>
+                В данный момент вы можете создать новый квест или принять принять участие в других различных квестах.
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 float-left">
+        <div class="card p-0 text-center mt-2">
+            <a href="{% url 'create' %}" class="btn btn-warning  m-0">Создать</a>
+        </div>
+    </div>
+    <div class="col-lg-6 float-right">
+        <div class="card p-0 text-center mt-2 mb-2">
+            <a href="{% url 'found' %}" class="btn btn-warning  m-0">Найти</a>
+        </div>
+    </div>
+{% else %}
+    <form action="{% url 'group_end' quest.id gr_id %}" method="post" class="w-100">
+        <div class="col-lg-12 mt-2">
+            <div class="card view" id="quest_avatar" style="min-height: 400px;">
+                <img src="{{ quest.avatar.url }}">
+            </div>
+        </div>
+        <div class="col-lg-12 mt-2">
+            <div class="card p-4 text-center">
+                <div>
+                    <h2 class="mb-2">«{{ quest.name }}»</h2>
+                    <h3 class="mb-1">Цель</h3>
+                </div>
+                {{ quest.target }}
+                <div class="mt-2">
+                    <h3 class="mb-1">Описание</h3>
+                </div>
+                {{ quest.description|safe }}
+            </div>
+        </div>
+        <div class="col-lg-12 mt-2">
+            <div class="card">
+                <div id="map" style="width: 100%; height: 300px">
+
+                </div>
+                <div class="p-4">
+                    {% for waypoint in waypoints %}
+                        <div class="text-center">
+                            <div class="">
+                                {{ waypoint.tip }}
+                            </div>
+                            <div class="md-form">
+                                <input type="text" id="answer-{{ waypoint.id }}" name="code" class="form-control">
+                                <label for="answer-{{ waypoint.id }}">Ответ</label>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-12 mt-2 mb-2 pt-0">
+            <button type="button" class="btn btn-primary w-100 m-0" data-toggle="modal" data-target="#agreement">Завершить квест</button>
+        </div>
+        <script>
+            quest_go_map({{ cords }});
+        </script>
+        <div class="modal fade pr-0" id="agreement" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-notify modal-info" role="document">
+                <!--Content-->
+                <div class="modal-content">
+                    <!--Header-->
+                    <div class="modal-header">
+                        <p class="heading lead"><i class="fa fa-warning"></i> Предупреждение</p>
+
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true" class="white-text">&times;</span>
+                        </button>
+                    </div>
+
+                    <!--Body-->
+                    <div class="modal-body">
+                        <div class="text-center">
+                            <p>Ваша группа действительно хочет завершить квест? Вы не сможете больше вносить изменения.<br>
+                                Вашей группе понравился данный квест?
+                            </p>
+                            <div class="list-group" id="radio_likes" style="box-shadow: none">
+                                <div class="row">
+                                    <input type="radio" id="like" name="like" value="1">
+                                    <label for="like" class="green-text">
+                                        <a class="list-group-item list-group-item-action flex-column align-items-start">
+                                            <i class="fa fa-check fa-5x m-auto" aria-hidden="true"></i>
+                                        </a>
+                                    </label>
+                                    <input type="radio" id="dislike" name="like" value="2">
+                                    <label for="dislike" class="red-text">
+                                        <a class="list-group-item list-group-item-action flex-column align-items-start">
+                                            <i class="fa fa-close fa-5x m-auto" aria-hidden="true"></i>
+                                        </a>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--Footer-->
+                        <div class="modal-footer justify-content-center">
+                            <button class="btn btn-primary">Завершить</button>
+                            <a class="btn btn-default" data-dismiss="modal" >Отмена</a>
+                        </div>
+                </div>
+                <!--/.Content-->
+            </div>
+        </div>
+    </form>
+{% endif %}

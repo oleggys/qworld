@@ -1,0 +1,22 @@
+{% extends 'qworld/base.html' %}
+{% block title %}
+Ожидание начала - {{ quest.name }}
+{% endblock %}
+{% block content %}
+    <div class="col-lg-12 mt-2">
+        <div class="card p-4 text-center">
+            <div class="text-primary mb-1" style="opacity: 0.6; font-size: 2rem">
+                <i class="fa fa-clock-o fa-5x" aria-hidden="true"></i>
+            </div>
+            <div style="opacity: 0.5; font-size: 1.2rem" class="mb-1">
+                Ждите начала квеста.<br> Место встречи в городе <strong>{{ quest.town }}</strong> по адрессу
+                <strong>{{ quest.meeting_point }}</strong>
+                <strong>{{ quest.meeting_date_time.date|date }}</strong> в
+                <strong>{{ quest.meeting_date_time.time|time }}</strong>
+            </div>
+        </div>
+        <div class="card p-0 text-center mt-2 mb-2">
+            <a href="{% url 'quest' quest.id %}" class="btn btn-primary  m-0">Перейти к квесту</a>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,435 @@
+{% extends 'qworld/base.html' %}
+{% block title %}
+Создание
+{% endblock %}
+{% load staticfiles %}
+{% block content %}
+    <script type="text/javascript" src="{% static 'all/clockpicker/jquery-clockpicker.js' %}"></script>
+    <script type="text/javascript" src="{% static 'all/datepicker/picker.js' %}"></script>
+    <script type="text/javascript" src="{% static 'all/datepicker/picker-date.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'all/datepicker/default.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'all/datepicker/default.date.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'all/clockpicker/jquery-clockpicker.css' %}">
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBUYNPWXGurMeIwlE9Q2Hjdl8e31UGvsOQ&callback=initMap"
+            async defer></script>
+    <script>
+        tinymce.init({
+          selector: 'textarea#id_description',
+          width:'100%',
+          height: 300,
+          theme: 'modern',
+          plugins: [
+            'advlist autolink lists link image charmap preview hr anchor pagebreak',
+            'searchreplace wordcount visualblocks visualchars code fullscreen',
+            'insertdatetime nonbreaking save table contextmenu directionality',
+            'emoticons template paste textcolor colorpicker textpattern imagetools codesample toc'
+          ],
+          toolbar1: 'undo redo | insert | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
+          toolbar2: 'preview | forecolor backcolor emoticons',
+          image_advtab: true,
+          content_css: [
+            '//fonts.googleapis.com/css?family=Lato:300,300i,400,400i',
+            '//www.tinymce.com/css/codepen.min.css'
+          ]
+         });
+    </script>
+    <form action="" method="POST" class="w-100" enctype='multipart/form-data' id='crform'>
+    {% csrf_token %}
+        <link rel="stylesheet" href="{% static 'qworld/css/qworldstyle.css' %}">
+            <div class="col-lg-12 mt-2 mb-2">
+                <div class="card settings_form view hm-black-light" id="quest_avatar" style="min-height: 400px;">
+                    <div class="mask" style="z-index: 98">
+                        <div class="text-center " id="add_quest_avatar_back">
+                            <div class="file-field white-text" id="add_quest_avatar">
+                                <p class="mb-0">
+                                    Перетащите или загрузите изображение
+                                </p>
+                                <div class="btn btn-primary file-field_one">
+                                    <span>Загрузить фотографию</span>
+                                    {{ CreateQuestForm.avatar }}
+                                </div>
+                                <script>
+                                    $("input#id_avatar").attr('required', true)
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8 float-left">
+                <div class="card mb-r">
+                    <div class="card-block">
+                        <div class="md-form mt-1 mb-2 {% if CreateQuestForm.name.errors %}error{% endif %}">
+                            {{ CreateQuestForm.name }}
+                            <label for="id_name">*Название квеста</label>
+                        </div>
+                        {% if CreateQuestForm.have_password %}
+                            <div class="md-form">
+                                {{ CreateQuestForm.password }}
+                                <label for="form11">Пароль</label>
+                            </div>
+                        {% else %}
+                            <div class="md-form">
+                                <input type="password" id="form11" class="form-control" disabled>
+                                <label for="form11" class="disabled">Пароль</label>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card mb-r">
+                    <div class="card-block">
+                        <div class="md-form mt-1 mb-0 {% if CreateQuestForm.target.errors %}error{% endif %}">
+                            {{ CreateQuestForm.target }}
+                            <label for="id_target">*Цель квеста</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="card mb-r {% if CreateQuestForm.description|length == 1 and request.POST %}error_shadow{% endif %}">
+                    {{ CreateQuestForm.description }}
+                </div>
+            </div>
+            <div class="col-lg-4 mb-2 float-right">
+                <div class="card">
+                    <div class="card-block">
+
+                        <!--Header-->
+                        <h4 style="color:#424242" class="mb-1">Настройки:</h4>
+
+                        <!--Body-->
+                        <div class="pl-1">
+                            {{ CreateQuestForm.have_password }}
+                            <label for="id_have_password">С паролем</label>
+
+                            {{ CreateQuestForm.have_group }}
+                            <label for="id_have_group">Групповой квест</label>
+
+                            {{ CreateQuestForm.paid }}
+                            <label for="id_paid" >Есть плата за участие</label>                
+
+                            <div class="md-form form-group">
+                                <i class="fa fa-rub prefix" style="color: #424242;width:2rem; line-height: 2"></i>
+                                {{ CreateQuestForm.cost }}
+                                <label for="cost">Цена</label>
+                            </div>
+                            <script>
+                                cost_check()
+                            </script>
+
+                        </div>
+
+                    </div>
+                </div>
+                <div class="card mt-2">
+                    <div class="card-block">
+
+                        <!--Header-->
+                        <h4 style="color:#424242" class="mb-1">Категории:</h4>
+                        <!--Body-->
+                        <div class="pl-1">
+                            {% for category in CreateQuestForm.category %}
+                                {{ category.tag }}
+                                <label for="{{ category.id_for_label }}"
+                                       name="category">{{ category.choice_label }}</label>
+                            {% endfor %}
+                        </div>
+
+                    </div>
+                </div>
+                <div class="card mt-2">
+                    <div class="card-block">
+
+                        <!--Header-->
+                        <h4 style="color:#424242" class="mb-1">Место встречи:</h4>
+
+                        <!--Body-->
+                        <div class="pl-1">
+                            {% if CreateQuestForm.town.errors %}
+                                <div class="md-form mt-1 mb-0 error">
+                                    {{ CreateQuestForm.town }}
+                                    <label for="id_town">*Город</label>
+                                </div>
+                            {% else %}
+                                <div class="md-form mt-1 mb-0">
+                                    {{ CreateQuestForm.town }}
+                                    <label for="id_town">*Город</label>
+                                </div>
+                            {% endif %}                           
+                            {% if CreateQuestForm.meeting_point.errors %}
+                                <div class="md-form mt-1 mb-0 error">
+                                    {{ CreateQuestForm.meeting_point }}
+                                    <label for="id_meeting_point">*Адрес</label>
+                                </div>
+                            {% else %}
+                                <div class="md-form mt-1 mb-0">
+                                    {{ CreateQuestForm.meeting_point }}
+                                    <label for="id_meeting_point">*Адрес</label>
+                                </div>
+                            {% endif %}
+
+                            {% if CreateQuestForm.meeting_date_time.errors %}
+                                <div class="md-form mt-1 mb-0 error">
+                                    {{ CreateQuestForm.meeting_date_time }}
+                                </div>
+                            {% else %}
+                                <div class="md-form mt-1 mb-0">
+                                    {{ CreateQuestForm.meeting_date_time }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-12 mb-2 float-left">
+                <div class="card card-block">
+                    <h4 style="color:#424242" class="mb-1 text-center">Продолжительность</h4>
+                    <div class="d-inline-flex questdatetime">
+                        <div class="col-md-6 ">
+                            <div class="grey-text text-center">Начало</div>
+                            {% if CreateQuestForm.begin_date_time.errors %}
+                                <div class="d-flex flex-row questdatetime_m error">
+                                    {{ CreateQuestForm.begin_date_time }}
+                                </div>
+                            {% else %}
+                                <div class="d-flex flex-row questdatetime_m">
+                                    {{ CreateQuestForm.begin_date_time }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <div class="grey-text text-center">Конец</div>
+                            {% if CreateQuestForm.end_date_time.errors %}
+                                <div class="d-flex flex-row questdatetime_m error">
+                                    {{ CreateQuestForm.end_date_time }}
+                                </div>
+                            {% else %}
+                                <div class="d-flex flex-row questdatetime_m">
+                                    {{ CreateQuestForm.end_date_time }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-12 mb-2 float-left">
+                <div id="mapcontainer" class="z-depth-1" style="height: 400px"></div>
+            </div>
+            <div class="col-lg-12 mb-2 float-left">
+                <div class="card card-block">
+                    <h4  class="mb-1 text-center"><o style="color:#424242">Маршрут</o>
+                    <i class="fa fa-info float-right" id="info" aria-hidden="true"
+                        data-toggle="modal" data-target="#fluidModalRightInfo"></i>
+                    </h4>
+                    <div class="" id="waypoints">
+                        {% if request.POST %}
+                            {% if have_group %}
+                                {% for group_id, group in group_waypoints.items %}
+                                    {% if not group_id|divisibleby:"2" %}
+                                        <div class="float-left w-100">
+                                    {% endif %}
+                                    <div class="group col-md-6 float-left">
+                                        <div class="divider" style="background:#{{ group.0 }}" for="{{ group_id }}"></div>
+                                        <input style="display: none" name="group_color" value="{{ group.0 }}">
+                                        <div class="md-form">
+                                            <input type="text" name="q_group_name-{{ group_id }}" class="form-control"
+                                                   value="{{ group.1 }}">
+                                            <label for="q_group_name-{{ group_id }}">Название группы</label>
+                                        </div>
+                                        <div class="md-form">
+                                            <input type="text" name="q_admin_log-{{ group_id }}" class="form-control"
+                                                value="{{ group.2 }}">
+                                            <label for="q_admin_log-{{ group_id }}">Логин админа</label>
+                                        </div>
+                                        <div class="md-form">
+                                            <input type="password" name="q_admin_password-{{ group_id }}" class="form-control"
+                                                value="{{ group.3 }}">
+                                            <label for="q_admin_password-{{ group_id }}">Пароль админа</label>
+                                        </div>
+                                        <h4 style="color:#424242" class="mb-1 text-center">Маршрут группы</h4>
+                                        <div class="group_waypoints_list" id="group_waypoints_list-{{ group_id }}">
+                                            {% for way_id, way in group.4.items %}
+                                                <div class="group_waypoint">
+                                                    <input style="display: none" name="q-col-{{ group_id }}">
+                                                    {% if way.5 %}
+                                                        <div class="md-form">
+                                                            <input type="text" id="q_address-{{ group_id }}-{{ way_id }}"
+                                                                   name="q_address-{{ group_id }}-{{ way_id }}"
+                                                                   second_name='q_address' class="form-control" value="{{ way.0 }}">
+                                                            <label for="q_address-{{ group_id }}-{{ way_id }}">Адрес</label>
+                                                        </div>
+                                                    {% elif group.1 == '' %}
+                                                        <div class="md-form">
+                                                            <input type="text" id="q_address-{{ group_id }}-{{ way_id }}"
+                                                                   name="q_address-{{ group_id }}-{{ way_id }}"
+                                                                   second_name='q_address' class="form-control">
+                                                            <label for="q_address-{{ group_id }}-{{ way_id }}">Адрес</label>
+                                                        </div>
+                                                    {% else %}
+                                                        <div class="md-form error">
+                                                            <input type="text" id="q_address-{{ group_id }}-{{ way_id }}"
+                                                                   name="q_address-{{ group_id }}-{{ way_id }}"
+                                                                   second_name='q_address' class="form-control" value="{{ way.0 }}">
+                                                            <label for="q_address-{{ group_id }}-{{ way_id }}">Адрес</label>
+                                                        </div>
+                                                    {% endif %}
+                                                    {% if group.1 == '' %}
+                                                        <input type="text" style="display: none" name="sh-{{ group_id }}-{{ way_id }}">
+                                                        <input type="text" style="display: none" name="dl-{{ group_id }}-{{ way_id }}">
+                                                    {% else %}
+                                                        <input type="text" style="display: none" name="sh-{{ group_id }}-{{ way_id }}" value="{{ way.1 }}">
+                                                        <input type="text" style="display: none" name="dl-{{ group_id }}-{{ way_id }}" value="{{ way.2 }}">
+                                                    {% endif %}
+                                                    <div class="md-form">
+                                                        <input type="text" id="q_code-{{ group_id }}-{{ way_id }}"
+                                                               name="q_code-{{ group_id }}-{{ way_id }}" class="form-control" value="{{ way.3 }}">
+                                                        <label for="q_code-{{ group_id }}-{{ way_id }}">Правильный ответ</label>
+                                                    </div>
+                                                    <div class="md-form">
+                                                        <textarea type="text" id="q_description-{{ group_id }}-{{ way_id }}"
+                                                                  name="q_description-{{ group_id }}-{{ way_id }}" class="md-textarea">{{ way.4 }}</textarea>
+                                                        <label for="q_description-{{ group_id }}-{{ way_id }}">Подсказка</label>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                        <div class="text-center hovergrey p-1 mb-1" id="add_group_waypoint" for="{{ group_id }}">
+                                            <span>
+                                                <?xml version="1.0" encoding="iso-8859-1"?>
+                                                <!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+                                                <svg height="20px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                                     viewBox="0 0 42 42" style="enable-background:new 0 0 42 42; margin-top: 0.5rem;" xml:space="preserve">
+                                                <polygon points="42,20 22,20 22,0 20,0 20,20 0,20 0,22 20,22 20,42 22,42 22,22 42,22 "/>
+                                                </svg>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    {% if group_id|divisibleby:"2" %}
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+
+                            {% else %}
+                                {% for key,waypoint in waypoints.items %}
+                                    <div class="waypoint">
+                                        <div class="col-md-6 float-left">
+                                            <input style="display: none" name="q-col">
+                                            {% if waypoint.5 %}
+                                                <div class="md-form">
+                                                    <input type="text" id="q_address-{{ key }}" name="q_address-{{ key }}"
+                                                           class="form-control" second_name="q_address" value="{{ waypoint.0 }}">
+                                                    <label for="q_address-1">Адрес</label>
+                                                </div>
+                                            {% else %}
+                                                <div class="md-form error">
+                                                    <input type="text" id="q_address-{{ key }}" name="q_address-{{ key }}"
+                                                           class="form-control" second_name="q_address" value="{{ waypoint.0 }}">
+                                                    <label for="q_address-1">Адрес</label>
+                                                </div>
+                                            {% endif %}
+
+                                            <input type="text" style="display: none" name="sh-{{ key }}"
+                                                   value="{{ waypoint.1 }}">
+                                            <input type="text" style="display: none" name="dl-{{ key }}"
+                                                   value="{{ waypoint.2 }}">
+                                        </div>
+                                        <div class="col-md-6 float-left">
+                                            <div class="md-form">
+                                                <input type="text" id="q_code-{{ key }}" name="q_code-{{ key }}"
+                                                       class="form-control" value="{{ waypoint.3 }}">
+                                                <label for="q_code-{{ key }}">Правильный ответ</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 float-left">
+                                            <div class="md-form">
+                                                <textarea type="text" id="q_description-{{ key }}"
+                                                           name="q_description-{{ key }}"
+                                                          class="md-textarea">{{ waypoint.4 }}</textarea>
+                                                <label for="q_description-{{ key }}">Подсказка</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        {% else %}
+                            <div class="waypoint">
+                                <div class="col-md-6 float-left">
+                                    <input style="display: none" name="q-col">
+                                    <div class="md-form">
+                                        <input type="text" id="q_address-1" name="q_address-1"
+                                               second_name="q_address" class="form-control">
+                                        <label for="q_address-1">Адрес</label>
+                                    </div>
+                                    <input type="text" style="display: none" name="sh-1">
+                                    <input type="text" style="display: none" name="dl-1">
+                                </div>
+                                <div class="col-md-6 float-left">
+                                    <div class="md-form">
+                                        <input type="text" id="q_code-1" name="q_code-1" class="form-control">
+                                        <label for="q_code-1">Правильный ответ</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 float-left">
+                                    <div class="md-form">
+                                        <textarea type="text" id="q_description-1"
+                                                  name="q_description-1" class="md-textarea"></textarea>
+                                        <label for="q_description-1">Подсказка</label>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="text-center hovergrey p-1" id="add_waypoint">
+                        <span>
+                            <?xml version="1.0" encoding="iso-8859-1"?>
+                            <!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)-->
+                            <svg height="20px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
+                                 xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                 viewBox="0 0 42 42" style="enable-background:new 0 0 42 42; margin-top: 0.5rem;" xml:space="preserve">
+                            <polygon points="42,20 22,20 22,0 20,0 20,20 0,20 0,22 20,22 20,42 22,42 22,22 42,22 "/>
+                            </svg>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        <script type="text/javascript">
+      
+           var onSubmit = function(token) {
+               $("#crform").submit()
+           };
+        </script>
+            <div class="col-lg-12 mb-2 float-left">
+                <button class="btn btn-primary text-center m-0 w-100 g-recaptcha"
+                              data-sitekey="6LeUTSsUAAAAAFZMEoProjLIUwnZcr5axeg_KwIB"
+                              data-callback="onSubmit">Создать</button>
+            </div>
+        <script>datepicker();waypoints();QuestAvatar();
+        {% if request.POST %}
+            initMap(true);
+        {% else %}
+            initMap(false);
+        {% endif %}
+        </script>
+    </form>
+    <div class="modal fade" id="fluidModalRightInfo" tabindex="-1" role="dialog"
+         aria-labelledby="fluidModalRightInfo"
+         style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <!--Content-->
+            <div class="modal-content w-100" style="background:transparent;border:none;">
+                <div class="modal-header pt-0" style="position:absolute;z-index:980;border:none; right:0;">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" class="white-text pt-0 fa-2x" >×</span>
+                    </button>
+                </div>
+
+                <div class="modal-body w-100 p-0">
+                        <iframe width="100%" height="500px"
+                                src="https://www.youtube.com/embed/9eSa_YBuOsE?rel=0&amp;showinfo=0"
+                                frameborder="0" allowfullscreen></iframe>
+                </div>
+            </div>
+            <!--/.Content-->
+        </div>
+    </div>
+{% endblock %}

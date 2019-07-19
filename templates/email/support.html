@@ -1,0 +1,14 @@
+<style>
+    div{
+        float:left;
+    }
+</style>
+<div style="width:100%;">
+    <div>user_id: <strong>{{ auth_user.id }}</strong></div>
+    <div>login: <strong>{{ auth_user.username }}</strong></div>
+    <div>email: <strong>{{ auth_user.email }}</strong></div>
+    <div>ФИО: <strong>{{ auth_user.lastname }} {{ auth_user.firstname }} {{ auth_user.middlename }}</strong></div> 
+    <div>Message:<br>
+        {{ text }}
+    </div>
+</div>

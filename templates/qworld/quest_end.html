@@ -1,0 +1,512 @@
+{% extends 'qworld/base.html' %}
+{% block title %}
+Квест - {{ quest.name }}
+{% endblock %}
+{% load staticfiles %}
+{% block content %}
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBUYNPWXGurMeIwlE9Q2Hjdl8e31UGvsOQ&callback=initMap"
+            async defer></script>
+    <link rel="stylesheet" href="{% static 'all/photoswipe/photoswipe.css' %}">
+    <link rel="stylesheet" href="{% static 'all/photoswipe/default-skin.css' %}">
+    <script src="{% static 'all/photoswipe/photoswipe.min.js' %}"></script>
+    <script src="{% static 'all/photoswipe/photoswipe-ui-default.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'qworld/css/qworldstyle.css' %}">
+    <style>
+        .nav-tabs{
+	    flex-wrap:wrap;
+	}
+	.cc .mc-attach-cnt{
+	    z-index: 650!important;
+	}
+    </style>
+    <div class="col-lg-12 mt-2 mb-2">
+        <div class="card" style="padding-top: 0!important; ">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="view hm-zoom hm-black-light h-100">
+                        <a>
+                            <img src="{{ quest.avatar.url }}" class="img-fluid" style="min-height: 300px" alt="">
+                            <div class="mask ">
+                                <p class="tile-title big-title p-2">«{{ quest.name }}»<br>
+                                    <f style="font-size: 0.95rem">{{ quest.target }}</f></p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-4 mt-1 table-border">
+                    <div class="w-50 h-50 table-border-element float-left text-center pt-3">
+                        <h3>{{ quest.participants }}</h3>
+                        <p>Участника(ов)</p>
+                    </div>
+                    <div class="w-50 h-50 table-border-element float-right text-center pt-3">
+                        <h3>{{ quest.patency }}%</h3>
+                        <p>Средняя проходимость</p>
+                    </div>
+                    <div class="w-50 h-50 table-border-element float-left text-center pt-3">
+                        <h3>{{ quest.likes }}</h3>
+                        <p>Лайков</p>
+                    </div>
+                    <div class="w-50 h-50 table-border-element float-right text-center pt-3">
+                        <h3>{{ quest.dislikes }}</h3>
+                        <p>Дизайков</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if quest.have_group %}
+        <div class="col-lg-7 mb-2">
+            <div class="card mb-2">
+                <div id="mapcontainer" style="height: 400px"></div>
+                <div class="card-block">
+                    <ul class="nav nav-tabs md-pills pills-ins" role="tablist">
+                        {% for group in groups %}
+                            <li class="nav-item prof_tablist" for="{{ group.key }}" name="marker_activate">
+                                <a class="nav-link" data-toggle="tab" href="#group{{ group.id }}" role="tab">
+                                    {{ group.name }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    <div class="tab-content">
+                        {% for group in groups %}
+                            <div class="tab-pane fade in show {% if group == groups|first %}active{% endif %}"
+                                 id="group{{ group.id }}" role="tabpanel">
+                                <br>
+                                {% for waypoint in waypoints %}
+                                    {% if waypoint.for_gid == group.id %}
+                                        <div class="col-md-12 pl-0">
+                                            <strong>Правильный ответ: </strong>{{ waypoint.code }}
+                                        </div>
+                                        <div class="col-md-12 pl-0">
+                                            <strong>Подсказка: </strong>{{ waypoint.tip }}
+                                        </div>
+                                        <br>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <script>group_quest_end('{{ quest.town }}',{{ cords }})</script>
+            </div>
+            <div class="card p-4">
+                <div id="mc-container"></div>
+                <script type="text/javascript">
+                cackle_widget = window.cackle_widget || [];
+                cackle_widget.push({widget: 'Comment', id: 54035});
+                (function() {
+                    var mc = document.createElement('script');
+                    mc.type = 'text/javascript';
+                    mc.async = true;
+                    mc.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://cackle.me/widget.js';
+                    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+                })();
+                </script>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="card mb-2">
+                <div class="card-block">
+                    <h4 style="color:#424242" class="mb-1">Информация:</h4>
+                    <p><i class="fa fa-key mr-1" aria-hidden="true"></i> Пароль: <strong>
+                        {% if quest.have_password %}
+                            Есть
+                        {% else %}
+                            Отсутствует
+                        {% endif %}
+                    </strong></p>
+
+                    <p><i class="fa fa-archive mr-1" aria-hidden="true"></i> Тип: <strong>
+                        {% if quest.have_group %}
+                            Групповой
+                        {% else %}
+                            Одиночный
+                        {% endif %}
+                    </strong></p>
+
+                    <p><i class="fa fa-money mr-1" aria-hidden="true"></i> Ценовая категория: <strong>
+                        {% if quest.paid %}
+                            Платный
+                        {% else %}
+                            Бесплатный
+                        {% endif %}
+                    </strong></p>
+
+                    {% if quest.paid %}
+                        <p><i class="fa fa-rub mr-1" aria-hidden="true"></i> Цена: <strong>
+                            {{ quest.cost }} руб
+                        </strong></p>
+                    {% endif %}
+
+                    <p><i class="fa fa-calendar mr-1" aria-hidden="true"></i> Дата создания: <strong>
+                        {{ quest.creation_time|date:'d/m/y' }}
+                    </strong></p>
+
+                    <p><i class="fa fa-clock-o mr-1" aria-hidden="true"></i> Начало квеста: <strong>
+                        {{ quest.begin_date_time|date:'d/m/y - H:m' }}
+                    </strong></p>
+
+                    <p><i class="fa fa-clock-o mr-1" aria-hidden="true"></i> Конец квеста: <strong>
+                        {{ quest.end_date_time|date:'d/m/y - H:m' }}
+                    </strong></p>
+                </div>
+            </div>
+            <div class="card mb-2">
+                <div class="card-block">
+                    <div class="my-gallery" itemscope>
+                        {% for photo in photos %}
+                            {% if photo.key <= 2 %}
+                                <figure itemprop="associatedMedia" itemscope style="max-width:50%;" class="float-left">
+                                  <a href="{{ photo.photo.url }}" itemprop="contentUrl"
+                                     data-size="{{ photo.photo.width }}x{{ photo.photo.height }}">
+                                      <img src="{{ photo.photo.url }}"
+                                           itemprop="thumbnail" alt="Image description" />
+                                  </a>
+                                </figure>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <button class="btn-flat float-right" data-toggle="modal" data-target="#allphotos">
+                        Показать все
+                    </button>
+                </div>
+            </div>
+            <div class="card mb-2">
+                <div class="">
+                    <div class="">
+                        <div class=" p-3" style="border-radius: 3px">
+                            <div class=" text-center" style="font-size: 1.2rem">Проходимость</div>
+                            <canvas id="groups"></canvas>
+                        </div>
+                    </div>
+                    <div class="p-2">
+                        <ul class="nav nav-tabs md-pills pills-ins mt-1" role="tablist">
+                                {% for group in groups %}
+                                    <li class="nav-item prof_tablist">
+                                        <a class="nav-link" data-toggle="tab" href="#players{{ group.id }}" role="tab">
+                                            {{ group.name }}
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                            <div class="p-2 pt-0">
+                                <div class="tab-content mt-1">
+                                    {% for group in groups %}
+                                        <div class="tab-pane fade in show {% if group == groups|first %}active{% endif %}"
+                                             id="players{{ group.id }}" role="tabpanel">
+                                            {% for key,player in quest_players.items %}
+                                                {% if key.key == group.id %}
+                                                    <a href="{% url 'profile' player.username %}" class="float-left mr-2 mb-1">
+                                                        <img src="{{ player.avatar.url }}" class="flag rounded-circle float-left mr-2"
+                                                              style="max-width: 25px">
+                                                        {{ player.username }}
+                                                    </a>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+        var ctxB = document.getElementById("groups").getContext('2d');
+var myBarChart = new Chart(ctxB, {
+    type: 'horizontalBar',
+    data: {
+        labels: [{% for group in groups %}"{{ group.name }}",{% endfor %}],
+        datasets: [{
+            label: "",
+            data: [{% for group in groups %}{{ group.completed_percent }},{% endfor %}],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.8)',
+                'rgba(54, 162, 235, 0.8)',
+                'rgba(255, 206, 86, 0.8)',
+                'rgba(75, 192, 192, 0.8)',
+                'rgba(153, 102, 255, 0.8)',
+                'rgba(255, 159, 64, 0.8)'
+            ],
+            borderColor: [
+                'rgba(255,99,132,1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    optionss: {
+        responsive: true,
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero:true
+                }
+            }]
+        }
+    }
+});
+        </script>
+    {% else %}<!--------------------------------------------------------------------------------------->
+        <div class="col-lg-8 mb-2">
+            <div class="card mb-2">
+                <div id="mapcontainer" style="height: 400px"></div>
+                <div class="card-block">
+                    {% for waypoint in waypoints %}
+                        <div class="col-md-6">
+                            <strong>Правильный ответ: </strong>{{ waypoint.code }}
+                        </div>
+                        <div class="col-md-12">
+                            <strong>Подсказка: </strong>{{ waypoint.tip }}
+                        </div>
+                        <br>
+                    {% endfor %}
+                </div>
+                <script>quest_end('{{ quest.town }}',{{ cords }})</script>
+            </div>
+            <div class="card p-4">
+                <div id="mc-container"></div>
+                <script type="text/javascript">
+                cackle_widget = window.cackle_widget || [];
+                cackle_widget.push({widget: 'Comment', id: 54035});
+                (function() {
+                    var mc = document.createElement('script');
+                    mc.type = 'text/javascript';
+                    mc.async = true;
+                    mc.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://cackle.me/widget.js';
+                    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+                })();
+                </script>
+            </div>
+        </div>
+        <div class="col-lg-4 mb-2">
+            <div class="card mb-2">
+                <div class="card-block">
+                    <h4 style="color:#424242" class="mb-1">Информация:</h4>
+                    <p><i class="fa fa-key mr-1" aria-hidden="true"></i> Пароль: <strong>
+                        {% if quest.have_password %}
+                            Есть
+                        {% else %}
+                            Отсутствует
+                        {% endif %}
+                    </strong></p>
+
+                    <p><i class="fa fa-archive mr-1" aria-hidden="true"></i> Тип: <strong>
+                        {% if quest.have_group %}
+                            Групповой
+                        {% else %}
+                            Одиночный
+                        {% endif %}
+                    </strong></p>
+
+                    <p><i class="fa fa-money mr-1" aria-hidden="true"></i> Ценовая категория: <strong>
+                        {% if quest.paid %}
+                            Платный
+                        {% else %}
+                            Бесплатный
+                        {% endif %}
+                    </strong></p>
+
+                    {% if quest.paid %}
+                        <p><i class="fa fa-rub mr-1" aria-hidden="true"></i> Цена: <strong>
+                            {{ quest.cost }} руб
+                        </strong></p>
+                    {% endif %}
+
+                    <p><i class="fa fa-calendar mr-1" aria-hidden="true"></i> Дата создания: <strong>
+                        {{ quest.creation_time|date:'d/m/y' }}
+                    </strong></p>
+
+                    <p><i class="fa fa-clock-o mr-1" aria-hidden="true"></i> Начало квеста: <strong>
+                        {{ quest.begin_date_time|date:'d/m/y - H:m' }}
+                    </strong></p>
+
+                    <p><i class="fa fa-clock-o mr-1" aria-hidden="true"></i> Конец квеста: <strong>
+                        {{ quest.end_date_time|date:'d/m/y - H:m' }}
+                    </strong></p>
+                </div>
+            </div>
+            <div class="card mb-2">
+                <div class="card-block">
+                    <table class="table">
+                        <thead class="mb-2" >
+                            <tr>
+                              <th style="border-top: none!important;">Логин</th>
+                              <th style="border-top: none!important;">Результат</th>
+                              <th style="border-top: none!important;">Статус</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for res, player in players.items %}
+                                {% if res.key <= 5 %}
+                                    <tr>
+                                         <td scope="row">
+                                             <img src="{{ player.avatar.url }}" class="flag rounded-circle float-left mr-2"
+                                                  style="max-width: 25px">
+                                             {{ player.username }}
+                                         </td>
+                                         <td>{{ res.completed_percent }}%</td>
+                                         <td>
+                                             {% if res.completed %}
+                                                 <span class="badge green">Завершил</span>
+                                             {% else %}
+                                                 <span class="badge warning-color">Не успел</span>
+                                             {% endif %}
+                                         </td>
+                                     </tr>
+                                {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% if players.items|length > 5 %}
+                        <button class="btn-flat float-right" data-toggle="modal" data-target="#allplayers">
+                            Показать всех
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card mb-2">
+                <div class="card-block">
+                    <div class="my-gallery" itemscope >
+                        {% for photo in photos %}
+                            {% if photo.key <= 1 %}
+                                <figure itemprop="associatedMedia" itemscope >
+                                  <a href="{{ photo.photo.url }}" itemprop="contentUrl"
+                                     data-size="{{ photo.photo.width }}x{{ photo.photo.height }}">
+                                      <img src="{{ photo.photo.url }}"
+                                           itemprop="thumbnail" alt="Image description" />
+                                  </a>
+                                </figure>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <button class="btn-flat float-right" data-toggle="modal" data-target="#allphotos">
+                        Показать все
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="allplayers" tabindex="-1" role="dialog"
+             aria-labelledby="allplayers" style="padding-right: 0!important;">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Список участников</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table">
+                            <thead class="mb-2" >
+                                <tr>
+                                  <th style="border-top: none!important;">Логин</th>
+                                  <th style="border-top: none!important;">Результат</th>
+                                  <th style="border-top: none!important;">Статус</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for res, player in players.items %}
+                                    <tr>
+                                         <td scope="row">
+                                             <img src="{{ player.avatar.url }}" class="flag rounded-circle float-left mr-2"
+                                                  style="max-width: 25px">
+                                             {{ player.username }}
+                                         </td>
+                                         <td>{{ res.completed_percent }}%</td>
+                                         <td>
+                                             {% if res.completed %}
+                                                 <span class="badge green">Завершил</span>
+                                             {% else %}
+                                                 <span class="badge warning-color">Не успел</span>
+                                             {% endif %}
+                                         </td>
+                                     </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">Закрыть</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    <div class="modal fade" id="allphotos" tabindex="-1" role="dialog"
+         aria-labelledby="allphotos" style="padding-right: 0!important;">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content" id="photo_gallery_content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Фотогалерея квеста</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="all_quest_photo">
+                    <div class="my-gallery" itemscope >
+                        {% for photo in photos %}
+                            <figure itemprop="associatedMedia" itemscope class="col-md-6 float-left">
+                              <a href="{{ photo.photo.url }}" itemprop="contentUrl" class="w-100"
+                                 data-size="{{ photo.photo.width }}x{{ photo.photo.height }}">
+                                  <img src="{{ photo.photo.url }}" class="w-100"
+                                       itemprop="thumbnail" alt="Image description" />
+                              </a>
+                            </figure>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    {% if quest.author_id == auth_user.id  %}
+                        <div class="float-left ml-2 mr-auto quest_photos_sett" id="checkbox_w_all">
+                            <input type="checkbox" name="quest_sett_photo" id="qsphoto">
+                            <label for="qsphoto"><i class="fa fa-cog fa-2x"></i></label>
+                        </div>
+                        <script>qpsettings()</script>
+                    {% endif %}
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="close_gal">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>photousergallery()</script>
+    <div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="pswp__bg"></div>
+        <div class="pswp__scroll-wrap">
+            <div class="pswp__container">
+                <div class="pswp__item"></div>
+                <div class="pswp__item"></div>
+                <div class="pswp__item"></div>
+            </div>
+            <div class="pswp__ui pswp__ui--hidden">
+                <div class="pswp__top-bar">
+                    <div class="pswp__counter"></div>
+                    <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                    <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                    <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                    <div class="pswp__preloader">
+                        <div class="pswp__preloader__icn">
+                          <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                    <div class="pswp__share-tooltip"></div>
+                </div>
+                <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button>
+                <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button>
+                <div class="pswp__caption" style="display: none">
+                    <div class="pswp__caption__center"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,161 @@
+{% extends 'loginsys/shab.html' %}
+{% load staticfiles %}
+{% block title %}
+Quests world
+{% endblock %}
+{% block content %}
+
+<div class="col-lg-12">
+    <section id="about" class="section features-5">
+
+                <!--First row-->
+                <div class="row mt-2">
+
+                    <!--First column-->
+                    <div class="col-lg-5 col-md-12 mb-3 mt-5 center-on-small-only wow fadeIn" data-wow-delay="0.2s" style="visibility: visible; animation-delay: 0.2s; animation-name: fadeIn;">
+                        <img src="{% static 'ipad_create.png' %}" alt="" class="z-depth-0 img-fluid">
+                    </div>
+                    <!--/First column-->
+
+                    <!--Second column-->
+                    <div class="col-lg-7 col-md-12 center-on-small">
+                        <h3 class="cyan-text-4 mt-5 pt-3"></h3>
+                        <h1 class=" font-bold font-up mb-5"></h1>
+                        <p class="grey-text mb-4" align="justify"></p>
+                        
+                    </div>
+                    <!--/Second column-->
+                </div>
+                <!--/First row-->
+
+            </section>
+    <section class="section feature-box">
+
+        <!--Section heading-->
+        <h1 class="section-heading pt-4 text-center" style="
+    font-weight: 300;font-size: 2.5rem;">Почему qWorld?</h1>
+        <!--Section description-->
+        <p class="section-description lead grey-text">qWorld - площадка для всех поколений, где вы сможете весело провести своё время, найти новых друзей или просто приобрести новые интересные знакомства. </p>
+
+        <!--Grid row-->
+        <div class="row features-small">
+
+            <!--Grid column-->
+            <div class="col-md-4">
+
+                <!--Grid row-->
+                <div class="row mb-2">
+                    <div class="col-2">
+                        <i class="fa fa-globe fa-2x indigo-text"></i>
+                    </div>
+                    <div class="col-10">
+                        <h5 class="feature-title">Доступность</h5>
+                        <p class="grey-text">Не важно в каком городе вы находитесь, наша площадка работает на всей территории Российской Федерации.</p>
+                    </div>
+                </div>
+                <!--Grid row-->
+
+                <!--Grid row-->
+                <div class="row mb-2">
+                    <div class="col-2">
+                        <i class="fa fa-users blue-text fa-2x"></i>
+                    </div>
+                    <div class="col-10">
+                        <h5 class="feature-title">Знакомства</h5>
+                        <p class="grey-text">Участвуя в квестах, вы можете встретить людей, с которыми вы не захотите расставаться и которые, возможно, станут вашими друзьями.</p>
+                    </div>
+                </div>
+                <!--Grid row-->
+
+                <!--Grid row-->
+                <div class="row mb-2">
+                    <div class="col-2">
+                        <i class="fa fa-glass cyan-text fa-2x"></i>
+                    </div>
+                    <div class="col-10">
+                        <h5 class="feature-title">Отдых</h5>
+                        <p class="grey-text">Участвуя в квестах, вы сможете получить множество приятных эмоций и забыть обо всех проблемах.</p>
+                    </div>
+                </div>
+                <!--Grid row-->
+
+            </div>
+            <!--Grid column-->
+
+            <!--Grid column-->
+            <div class="col-md-4 mb-2 center-on-small-only flex-center">
+                <img src="{% static 'iphonfich.png' %}" alt="" class="z-depth-0">
+            </div>
+            <!--Grid column-->
+
+            <!--Grid column-->
+            <div class="col-md-4">
+
+                <!--Grid row-->
+                <div class="row mb-2">
+                    <div class="col-2">
+                        <i class="fa fa-heart deep-purple-text fa-2x"></i>
+                    </div>
+                    <div class="col-10">
+                        <h5 class="feature-title">Поклонники</h5>
+                        <p class="grey-text">Наша площадка завоёвывает сердца пользователей удобным и интуитивно-понятным интерфейсом.</p>
+                    </div>
+                </div>
+                <!--Grid row-->
+
+                <!--Grid row-->
+                <div class="row mb-2">
+                    <div class="col-2">
+                        <i class="fa fa-trophy purple-text fa-2x"></i>
+                    </div>
+                    <div class="col-10">
+                        <h5 class="feature-title">Достижения</h5>
+                        <p class="grey-text">У нас есть система уровней и очков для пользователей, так же за выполнение определённых действий пользователь получает достижения.</p>
+                    </div>
+                </div>
+                <!--Grid row-->
+
+                <!--Grid row-->
+                <div class="row mb-2">
+                    <div class="col-2">
+                        <i class="fa fa-pencil pink-text fa-2x"></i>
+                    </div>
+                    <div class="col-10">
+                        <h5 class="feature-title">Индивидуальность</h5>
+                        <p class="grey-text">Вы можете создать необычный, удивительный и замечательный квест, в котором захотят участвовать.</p>
+                    </div>
+                </div>
+                <!--Grid row-->
+
+            </div>
+            <!--Grid column-->
+
+        </div>
+        <!--Grid row-->
+
+    </section>
+<style>
+.feature-box .feature-title {
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+</style>
+    <div class="row flex-center">
+        <div class="col-md-6 text-center text-md-left margins">
+            <h1 class="h1-responsive" style="font-weight: 300;">Участвуйте в квестах с помощью вашего смартфона.</h1>
+            <hr class="hr-light">
+            <h6>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rem repellendus quasi fuga nesciunt dolorum nulla magnam veniam sapiente, fugiat! Commodi sequi non animi ea dolor molestiae iste.</h6>
+            <br>
+            <a class="btn btn-outline-black">
+                <i class="fa fa-android" aria-hidden="true"></i>
+            </a>
+            <a class="btn btn-outline-black">
+                <i class="fa fa-apple" aria-hidden="true"></i>
+            </a>
+        </div>
+        <div class="col-md-6 d-flex justify-content-center">
+            <img src="{% static 'iphone.png' %}" alt="" class="img-responsive">
+        </div>
+    </div>
+</div>
+{% endblock %}

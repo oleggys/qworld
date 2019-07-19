@@ -1,0 +1,58 @@
+<div class="w-100 foto_select">
+    <div class="text-center grey-text mb-1">
+        Нажмите на те фотографии, которые хотите удалить.
+    </div>
+    {% for photos in photos %}
+        <figure itemprop="associatedMedia" itemscope class="col-md-6 float-left" >
+            <input id="{{ photos.key }}" name="{{ photos.key }}"
+                   type="checkbox" value="{{ photos.id }}">
+            <label for="{{ photos.key }}" class="float-left" style="padding-left: 0;" >
+                <img src="{{ photos.photo.url }}" class="w-100">
+            </label>
+        </figure>
+    {% endfor %}
+    <div class="col-md-12 float-right settings_form mb-1" style="height: 200px">
+        <div class="mask" style="z-index: 98">
+            <div class="text-center mt-0 w-100" id="add_quest_avatar_back" style="height: 200px;border: 2px dashed #000;
+                                                                        margin-left: 0;margin-right: 0">
+                <div class="file-field" id="add_quest_avatar">
+                    <p class="mb-0">
+                        Перетащите или загрузите изображение
+                    </p>
+                    <div class="btn btn-primary file-field_one">
+                        <span>Загрузить фотографию</span>
+                        <input id="quest_photos_input" name="quest_photos" onchange="QuestPhotoItems(this.files)"
+                               type="file" multiple>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>QuestPhotos()</script>
+    <div class="list_quest_photos w-100 float-left" style="">
+
+    </div>
+    <script>
+        $("#close_gal").before('<button class="btn btn-primary" ' +
+            'name="save_gallery" type="submit">Сохранить</button>');
+        $("#photo_gallery_content").wrapAll('<form method="post" id="save_photo" enctype="multipart/form-data"></form>');
+        $("form#save_photo").submit(function(event){
+            event.preventDefault();
+            var len = $('input[type=checkbox]').length - 1;
+            var bad_photo = [];
+            xhr = new XMLHttpRequest();
+            fd = new FormData($(this)[0]);
+            for(var i=1; i<=len; i++){
+                fd.delete(String(i));
+                fd.append(i,[$('input[name='+i+']').attr('value'),$('input[name='+i+']').prop('checked')]);
+            }
+            fd.append('len',len);
+            xhr.open("POST", "save_quest_photos/");
+            xhr.send(fd);
+            xhr.addEventListener("load", function(){
+               $('#allphotos').html(xhr.responseText)
+            });
+          return false;
+        });
+    </script>
+</div>

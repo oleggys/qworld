@@ -1,0 +1,198 @@
+{% extends 'qworld/base.html' %}
+{% block title %}
+Квест - {{ quest.name }}
+{% endblock %}
+{% load poll_extras %}
+{% block content %}
+    {% if quest.have_group %}
+            <form method="post" class='w-100'>
+    {% endif %}
+    {% csrf_token %}
+    {% if quest.avatar %}
+        <div class="col-lg-12 mt-2">
+            <div class="card view" id="quest_avatar" style="min-height: 400px;">
+                <img src="{{ quest.avatar.url }}">
+            </div>
+        </div>
+    {% endif %}
+    <div class="col-lg-8 mt-2 float-left">
+        <div class="card p-4" style="min-height: 550px">
+            <div class="text-center">
+                <h2 class="mb-2">«{{ quest.name }}»</h2>
+                <h3 class="mb-1">Цель</h3>
+            </div>
+            {{ quest.target }}
+            <div class="text-center mt-2">
+                <h3 class="mb-1">Описание</h3>
+            </div>
+            {{ quest.description|safe }}
+        </div>
+    </div>
+    <div class="col-lg-4 float-right">
+        <div class="card mt-2">
+            <div class="admin-panel info-admin-panel">
+                <div class="card-block">
+                    <h4 style="color:#424242" class="mb-1">Информация:</h4>
+                    <p><i class="fa fa-key mr-1" aria-hidden="true"></i> Пароль: <strong>
+                        {% if quest.have_password %}
+                            Есть
+                        {% else %}
+                            Отсутствует
+                        {% endif %}
+                    </strong></p>
+
+                    <p><i class="fa fa-archive mr-1" aria-hidden="true"></i> Тип: <strong>
+                        {% if quest.have_group %}
+                            Групповой
+                        {% else %}
+                            Одиночный
+                        {% endif %}
+                    </strong></p>
+
+                    <p><i class="fa fa-money mr-1" aria-hidden="true"></i> Ценовая категория: <strong>
+                        {% if quest.paid %}
+                            Платный
+                        {% else %}
+                            Бесплатный
+                        {% endif %}
+                    </strong></p>
+
+                    {% if quest.paid %}
+                        <p><i class="fa fa-rub mr-1" aria-hidden="true"></i> Цена: <strong>
+                            {{ quest.cost }} руб
+                        </strong></p>
+                    {% endif %}
+
+                    <p><i class="fa fa-users mr-1 mr-1" aria-hidden="true"></i> Участников: <strong>
+                        {{ quest.participants }}
+                    </strong></p>
+
+                    <p><i class="fa fa-calendar mr-1" aria-hidden="true"></i> Дата создания: <strong>
+                        {{ quest.creation_time|date:'d/m/y' }}
+                    </strong></p>
+                    {% if quest.author_id == auth_user.id %}
+                        <div class="fixed-action-btn text-right" style="bottom: 45px; right: 24px;">
+                            <a href="{% url 'change' quest.id %}" class="btn-floating btn-large primary-color hoverable"><i class="fa fa-pencil"></i></a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% if part_yet %}
+            <div class="fixed-action-btn text-right" style="bottom: 45px; right: 24px;">
+                <button class="btn-floating btn-large btn-dark-green
+                hoverable" data-toggle="tooltip" data-placement="left" title="Вы уже участвуете!"> <i class="fa fa-check"></i></button>
+            </div>
+            <script>
+            $(function () {
+              $('[data-toggle="tooltip"]').tooltip()
+            })
+            </script>
+        {% else %}
+            {% if not quest.have_group %}
+            <form action="{% url 'participate' quest.id %}" method="post">
+            {% endif %}
+                {% if quest.have_password and not part_yet %}
+                    {% if password_err %}
+                        <div class="card mt-2 p-4 error" id="div_pass">
+                            <div class="md-form mb-0 error">
+                                <input type="password" name="part_password" id="password" class="form-control mb-0" required>
+                                <label for="password">*Пароль</label>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="card mt-2 p-4" id="div_pass">
+                            <div class="md-form mb-0">
+                                <input type="password" name="part_password" id="password" class="form-control mb-0" required>
+                                <label for="password">*Пароль</label>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endif %}
+                {% if not part_yet and not quest.have_group and quest.author_id != auth_user.id %}
+                    <div class="fixed-action-btn text-right" style="bottom: 45px; right: 24px;">
+                        <button class="btn-floating btn-large primary-color
+                        hoverable"> <i class="fa fa-play"></i></button>
+                    </div>
+                {% endif %}
+            {% if not quest.have_group %}
+             </form>
+            {% endif %}
+        {% endif %}
+        <div class="card mt-2 p-4">
+            <h4 style="color:#424242" class="mb-1">Категории:</h4>
+            {% for category in quest.category.all %}
+                <h4 class="text-primary" style="font-size: 1.2rem;">{{ category.name }}</h4>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="col-lg-12 mt-2 mb-2 float-left">
+        <div class="card">
+            <div class="row">
+                <div class="col-lg-8" style="height: 400px">
+                    <div id="mapcontainer" style="height: 400px; width: 100%"></div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="p-4">
+                        <h4 style="color:#424242" class="mb-1">Место встречи:</h4>
+                        <p><i class="fa fa-building-o mr-1 mr-1" aria-hidden="true"></i> Город: <strong>
+                            {{ quest.town }}
+                        </strong></p>
+                        <p><i class="fa fa-map-marker mr-1 mr-1" aria-hidden="true"></i> Адрес: <strong>
+                            {{ quest.meeting_point }}
+                        </strong></p>
+                        <p><i class="fa fa-calendar mr-1 mr-1" aria-hidden="true"></i> Дата: <strong>
+                            {{ quest.meeting_date_time.date|date }}
+                        </strong></p>
+                        <p><i class="fa fa-clock-o mr-1 mr-1" aria-hidden="true"></i> Время: <strong>
+                            {{ quest.meeting_date_time.time }}
+                        </strong></p>
+                        <h4 style="color:#424242" class="mb-1">Продолжительность:</h4>
+                        <p><i class="fa fa-calendar mr-1 mr-1" aria-hidden="true"></i> Начало: <strong>
+                            {{ quest.begin_date_time }}
+                        </strong></p>
+                        <p><i class="fa fa-calendar mr-1 mr-1" aria-hidden="true"></i> Конец: <strong>
+                            {{ quest.end_date_time }}
+                        </strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if quest.have_group %}
+        <div class="col-lg-12 mb-2 float-left">
+            <div class="card p-4">
+                <div class="text-center">
+                    <h3 class="mb-1">Группы</h3>
+                </div>
+                <div class="row">
+                    {% for group in groups %}
+                        <div class="col-lg-4 col-md-6 ml-auto mr-auto">
+                            <div class="text-center">
+                                <div class="p-4">
+                                    <div class="flex-center">
+                                        <div class="card-circle" style="color:{{ quest.color|randcolor }};">
+                                            <i class="fa fa-group"></i>
+                                        </div>
+                                    </div>
+                                    <h3><strong>{{ group.name }}</strong></h3>
+                                    <p>{{ group.len_group_players }} участник(а/ов)</p>
+                                    {% if not part_yet and quest.author_id != auth_user.id %}
+                                        <button class="btn btn-primary" id="part_qroup_quest"
+                                                formaction="{% url 'participate_group' quest.id group.id %}">Вступить</button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    {% if quest.have_group %}
+        </form>
+    {% endif %}
+    <script src="https://maps.googleapis.com/maps/api/js?key=..."
+            async defer></script>
+    <script>meeting_map('{{ quest.town }}','{{ quest.meeting_point }}')</script>
+{% endblock %}

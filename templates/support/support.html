@@ -1,0 +1,73 @@
+{% extends 'qworld/base.html' %}
+{% block title %}
+Поддержка
+{% endblock %}
+
+{% block content %}
+    <form action="" method="post" class="w-100 row m-auto" id="sendm">
+        {% if title_err %}
+            <div class="col-lg-4 mt-2 error_label">
+        {% else %}
+            <div class="col-lg-4 mt-2">
+        {% endif %}
+            <div class="list-group" id="checkbox_w_all">
+                <input type="radio" id="title-1"  name="title" value="1">
+                <label for="title-1">
+                    <a class="list-group-item list-group-item-action flex-column align-items-start">
+                        <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">Предложения</h5>
+                        </div>
+                        <p class="mb-1">Отправьте нам свои пожелания, замечания и предложения по улучшению площадки. Мы обязательно прислушаемся к вам. </p>
+                    </a>
+                </label>
+                <input type="radio" id="title-2"  name="title" value="2">
+                <label for="title-2">
+                    <a class="list-group-item list-group-item-action flex-column align-items-start">
+                        <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">Помощь</h5>
+                        </div>
+                        <p class="mb-1">Опишите вашу проблему и мы с вами свяжемся, чтобы её устранить.</p>
+                    </a>
+                </label>
+                <input type="radio" id="title-3"  name="title" value="3">
+                <label for="title-3">
+                    <a class="list-group-item list-group-item-action flex-column align-items-start">
+                        <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">Жалобы</h5>
+                        </div>
+                        <p class="mb-1">Отправьте нам свои жалобы, и мы обязательно рассмотрим её и примем меры для её устранения.</p>
+                    </a>
+                </label>
+            </div>
+        </div>
+        <script type="text/javascript">  
+
+           var onSubmit = function(token) {
+               $("#sendm").submit()
+           };
+        </script>
+        <div class="col-lg-8 mt-2 mb-2">
+            <div class="card">
+                <div class="card-block">
+                    <div class="md-form">
+                        <input type="text" id="message-email" name='memail' class="form-control" disabled
+                               value="{{ auth_user.email }}">
+                        <label for="message-email" class="disabled">Email:</label>
+                    </div>
+                    <div class="md-form">
+                        {{ SupportMessageForm.topic }}
+                        <label for="message-topic">Тема:</label>
+                    </div>
+                    <div class="md-form">
+                        {{ SupportMessageForm.text }}
+                        <label for="message-text">Ваше сообщение</label>
+                    </div>
+                    {% csrf_token %}
+                    <button class="btn btn-primary float-right g-recaptcha"
+                              data-sitekey="6LeUTSsUAAAAAFZMEoProjLIUwnZcr5axeg_KwIB"
+                              data-callback="onSubmit">Отправить</button>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock %}

@@ -1,0 +1,149 @@
+{% extends 'loginsys/shab.html' %}
+{% block title %}
+Регистрация
+{% endblock %}
+{% load staticfiles %}
+{% block content %}
+<script src='https://www.google.com/recaptcha/api.js'></script>
+    <form action="/registration/" method="POST" id="registration_form" class="registration_form" style="width:100%" enctype='multipart/form-data'>
+        {% csrf_token %}
+        <div class="col-lg-4 float-left mb-4" >
+            <!--Form with header-->
+            <div class="card shadow-none">
+                <div class="card-block text-center">
+                    <!--Header-->
+                    <div class="form-header primary-color darken-3" style="padding: 0.7rem">
+                        <h4>Добавить Фото</h4>
+                    </div>
+                    <img id='revistrationavatar' src="{% static 'default_user_avatar.png' %}" alt="User Photo"
+                         class="z-depth-1-half rounded-circle contact-avatar my-2 mx-auto
+                    {% if form.avatar.errors or image_error %}
+                        error_image
+                    {% endif %}
+                    " style="border-bottom-left-radius:50%;border-bottom-right-radius:50%;max-width: 120px;max-height: 120px; ">
+                    <p class="text-muted"><small>Фото профиля будет изменено автоматически</small></p>
+                    {% if image_error %}
+                        <div class="text-center red-text">Размер изображения превышает 20Кб</div>
+                    {% endif %}
+                    <div class="text-center">
+                        <div class="file-field" style="width:auto;">
+                            <div class="btn btn-primary file-field_one">
+                                <span>Загрузить фотографию</span>
+                                {{ form.avatar }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--/Form with header-->
+        </div>
+        <script>
+        // рендеринг изображения
+        function renderImage(file) {
+
+         // генерация нового объекта FileReader
+          var reader = new FileReader();
+
+         // подстановка изображения в атрибут src
+          reader.onload = function(event) {
+            the_url = event.target.result;
+            $("img#revistrationavatar").attr('src',the_url)
+          };
+
+         // при считке файла, вызывается метод, описанный выше
+          reader.readAsDataURL(file);
+        }
+        $(document).ready(function () {
+            $("input#id_avatar").change(function() {
+                 renderImage(this.files[0])
+            });
+        })
+        </script>
+        <div class="col-lg-8 float-right mb-2">
+            <!--Form with header-->
+            <div class="card shadow-none">
+                <div class="card-block">
+                    <!--Header-->
+                    <div class="form-header primary-color darken-3" style="padding: 0.7rem">
+                        <h4>Регистрация</h4>
+                    </div>
+                    <div class="row">
+                        <!--First column-->
+                        <div class="col-md-12">
+                            <div class="md-form {% if form.email.errors %}error{% endif %}">
+                                {{ form.email }}
+                                <label for="id_username" data-error="wrong" data-success="right">*Ваш email</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="m-4"></div>
+                    <div class="row">
+                        <!--First column-->
+                        <div class="col-md-6">
+                            <div class="md-form {% if form.username.errors %}error{% endif %}">
+                                {{ form.username }}
+                                <label for="id_username" data-error="wrong" data-success="right">*Логин</label>
+                            </div>
+                        </div>
+                        <!--Second column-->
+                        <div class="col-md-6">
+                            <div class="md-form">
+                                {{ form.firstname }}
+                                <label for="id_firstname" data-error="wrong" data-success="right">Ваше имя</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="m-4"></div>
+                    <div class="row">
+                        <!--First column-->
+                        <div class="col-md-6">
+                            <div class="md-form">
+                                {{ form.lastname }}
+                                <label for="id_lastname" data-error="wrong" data-success="right">Ваша фамилия</label>
+                            </div>
+                        </div>
+                        <!--Second column-->
+                        <div class="col-md-6">
+                            <div class="md-form">
+                                {{ form.middlename }}
+                                <label for="id_middlename" data-error="wrong" data-success="right">Ваше отчество</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="m-4"></div>
+                    <div class="row">
+                        <!--First column-->
+                        <div class="col-md-6">
+                            <div class="md-form {% if password1_error %}error{% endif %}">
+                                {{ form.password1 }}
+                                <label for="id_password1" data-error="wrong" data-success="right">*Ваш пароль</label>
+                            </div>
+                        </div>
+                        <!--Second column-->
+                        <div class="col-md-6">
+                            <div class="md-form {% if form.password2.errors %}error{% endif %}">
+                                {{ form.password2 }}
+                                <label for="id_password2" data-error="wrong" data-success="right">*Подтверждение пароля</label>
+                            </div>
+                        </div>
+                    </div>
+                    {% if form.password2.errors %}<div class="m-2 text-center red-text">{{ form.password2.errors }}</div>{% endif %}   
+                    <script type="text/javascript">
+      
+                        var onSubmit = function(token) {
+                            $("#registration_form").submit()
+                        };
+                    </script>
+                    <div class="m-4"></div>
+                    <div class="text-center">
+                        <button class="btn btn-primary darken-3 g-recaptcha"
+                                 data-sitekey="6LeUTSsUAAAAAFZMEoProjLIUwnZcr5axeg_KwIB"
+                                 data-callback="onSubmit">Создать Аккаунт</button>
+                    </div>
+                </div>
+
+            </div>
+            <!--/Form with header-->
+        </div>
+    </form>
+{% endblock %}

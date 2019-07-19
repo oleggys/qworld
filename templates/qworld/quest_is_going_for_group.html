@@ -1,0 +1,30 @@
+{% extends 'qworld/base.html' %}
+{% block title %}
+Прохождение - {{ quest.name }}
+{% endblock %}
+{% block content %}
+    <script src="https://maps.googleapis.com/maps/api/js?key=...&libraries=geometry"
+            async defer></script>
+    <div id="go_cont" class="w-100">
+        <div class="col-lg-6 m-auto mt-2">
+            <div class="card p-4">
+                <div class="md-form">
+                    <input type="text" id="group_name" class="form-control">
+                    <label for="group_name">Название группы</label>
+                </div>
+                <div class="md-form">
+                    <input type="text" id="admin_group_log" class="form-control">
+                    <label for="admin_group_log">Логин админа</label>
+                </div>
+                <div class="md-form mb-0">
+                    <input type="password" id="admin_group_pass" class="form-control">
+                    <label for="admin_group_pass">Пароль админа</label>
+                </div>
+                <div id="err" class="red-text" style="display: none">Неправильный логин, пароль, название группы или вы не
+                    являетесь участником данной группы</div>
+            </div>
+            <button class="btn btn-primary w-100 ml-0 mt-2" id="group_log_in">Войти</button>
+        </div>
+        <script>group_log_in()</script>
+    </div>
+{% endblock %}

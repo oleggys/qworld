@@ -1,0 +1,551 @@
+{% extends 'qworld/base.html' %}
+{% block title %}
+Профиль - {{ user.username }}
+{% endblock %}
+{% load staticfiles %}
+{% block content %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <link rel="stylesheet" href="{% static 'all/photoswipe/photoswipe.css' %}">
+    <link rel="stylesheet" href="{% static 'all/photoswipe/default-skin.css' %}">
+    <script src="{% static 'all/photoswipe/photoswipe.min.js' %}"></script>
+    <script src="{% static 'all/photoswipe/photoswipe-ui-default.min.js' %}"></script>
+    <div class="col-lg-4 mt-2" xmlns="http://www.w3.org/1999/html">
+        <div class="card contact-card with-padding">
+            <div class="card-body p-4">
+                <div class="mt-1 mb-1">
+                    <img src="{{ user.avatar.url }}" alt="" class=" rounded-circle contact-avatar mx-auto"
+                         style="border-bottom-left-radius:50%;border-bottom-right-radius:50%;width: 110px;height: 110px">
+                </div>
+                <h3 class="h3-responsive text-center">{{ user.lastname }} {{ user.firstname }}</h3>
+                <h3 class="h3-responsive text-center mb-1">{{ user.middlename }}</h3>
+                <div class="d-flex flex-row">
+                    <div class="user-level pr-2">
+                        {{ user.level }}
+                    </div>
+                    <div style="width:100%;">
+                        <div class="grey-text">
+                            {{ user.level_points }} / 1000
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width:{{ level_points }}%"
+                                 aria-valuenow="{{level_points }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                </div>
+                <ul class="striped">
+                    <li><strong>E-mail адресс:</strong> {{ user.email }}</li>
+                    <li><strong>Номер телефона:</strong>
+                    {% if user.phone %}
+                        {{ user.phone }}
+                    {% else %}
+                        не указан
+                    {% endif %}
+                    </li>
+                    <li><strong>Дата рождения:</strong>
+                        {% if user.date_of_birth %}
+                            {{ user.date_of_birth|date:'d/m/Y' }}
+                        {% else %}
+                            не указана
+                        {% endif %}
+                    </li>
+                    {% if user.id == auth_user.id %}
+                        <li><strong>Баланс:</strong> <m>{{ user.money }}</m> руб.
+                            <div class="float-right op-hover" data-toggle="modal" data-target="#givemoney">
+                            <i class="fa fa-money" aria-hidden="true" ></i></div></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    {% if user.id == auth_user.id %}
+    <div class="fixed-action-btn text-right" style="bottom: 45px; right: 24px;">
+        <a href="{% url 'settings' %}" class="btn-floating btn-large btn-primary
+        hoverable" data-toggle="tooltip" data-placement="left"
+                title="Настроить профиль"><i class="fa fa-gear"></i></a>
+    </div>
+    {% endif %}
+    <script>
+        $(function () {
+          $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
+    <div class="col-lg-8 mt-2">
+        <div class="card p-3" style="min-height:{% if user.id == auth_user.id %}495{% else %}455{% endif %}px;height:100%;">
+            <ul class="nav nav-tabs md-pills pills-ins" role="tablist">
+                <li class="nav-item prof_tablist">
+                    <a class="nav-link  " data-toggle="tab" href="#about_user" role="tab">
+                        <i class="fa fa-file-text-o"></i> О себе:
+                    </a>
+                </li>
+                <li class="nav-item prof_tablist" >
+                    <a class="nav-link" data-toggle="tab" href="#achivments" role="tab">
+                        <i class="fa fa-trophy" aria-hidden="true"></i> Достижения
+                    </a>
+                </li>
+                <li class="nav-item prof_tablist">
+                    <a class="nav-link" data-toggle="tab" href="#photogallery" role="tab">
+                        <i class="fa fa-photo" aria-hidden="true"></i> Фотогалерея
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Tab panels -->
+            <div class="tab-content">
+                <!--Panel 1-->
+                <div class="tab-pane fade in show active" id="about_user" role="tabpanel">
+                    <br>
+                    {% if user.about_user  %}
+                        {{ user.about_user|safe  }}
+                    {% else %}
+                        <div class="grey-text">Данный пользователь не предоставил информации о себе.</div>
+                    {% endif %}
+                </div>
+                <!--/.Panel 1-->
+                <!--Panel 2-->
+                <div class="tab-pane fade" id="achivments" role="tabpanel">
+                    <br>
+                    <p style="height: {% if user.id == auth_user.id %}320{% else %}280{% endif %}px">
+                        {% for user_achievement, score in user_achievements.items %}
+                            <img class="mb-2 m-2 hoverable" src="{{ user_achievement.avatar.url }}"
+                                 style="width: 82px;height: 82px;float:left;
+                                 {% if score.min_score == user_achievement.max_score %}
+                                     opacity: 1;
+                                 {% else %}
+                                     opacity: 0.4;
+                                 {% endif %}"
+                                 data-toggle="tooltip" data-placement="bottom"
+                                 title="{{ user_achievement.name }}" >
+                        {% endfor %}
+                    </p>
+                    <button class="btn-flat float-right" data-toggle="modal" data-target="#allachievements">
+                        Подробнее
+                    </button>
+                </div>
+                <!--/.Panel 2-->
+                <!--Panel 3-->
+                <div class="tab-pane fade" id="photogallery" role="tabpanel">
+                    <br>
+                    {% if user_photos %}
+                        <div class="my-gallery" itemscope >
+                            {% for user_photo in user_photos %}
+                                <figure itemprop="associatedMedia" itemscope class="col-md-4 float-left">
+                                  <a href="{{ user_photo.photo.url }}" itemprop="contentUrl"
+                                     data-size="{{ user_photo.photo.width }}x{{ user_photo.photo.height }}">
+                                      <img src="{{ user_photo.photo.url }}"
+                                           itemprop="thumbnail" alt="Image description" />
+                                  </a>
+                                </figure>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="grey-text">К сожалению, данный пользователь не выставил фотографии для просмотра.</div>
+                    {% endif %}
+                </div>
+                <!--/.Panel 3-->
+            </div>
+        </div>
+    </div>
+    {% if wait_quests %}
+        <div class="col-lg-12 mt-2">
+            <div class="card p-4">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Название</th>
+                            <th>Город</th>
+                            <th>Группы</th>
+                            <th>Пароль</th>
+                            <th>Действие</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for wait_quest_id, wait_quest in wait_quests.items %}
+                        <tr>
+                            <td>{{ wait_quest.name }}</td>
+                            <td>{{ wait_quest.town }}</td>
+                            <td>
+                                {% if wait_quest.have_group %}
+                                    <i class="fa fa-check" style="color:#00C851" aria-hidden="true"></i>
+                                {% else %}
+                                    <i class="fa fa-times" style="color:#CC0000" aria-hidden="true"></i>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if wait_quest.have_password %}
+                                    <i class="fa fa-check" style="color:#00C851" aria-hidden="true"></i>
+                                {% else %}
+                                    <i class="fa fa-times" style="color:#CC0000" aria-hidden="true"></i>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'payment' wait_quest_id %}"><button type="button" class="btn btn-primary">Оплатить</button></a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endif %}
+    <div class="col-lg-8 mt-2">
+        <div class="card p-4">
+            {% if user.sb_can_rt_com %}
+                <div id="mc-container"></div>
+                <script type="text/javascript">
+                cackle_widget = window.cackle_widget || [];
+                cackle_widget.push({widget: 'Comment', id: 54035});
+                (function() {
+                    var mc = document.createElement('script');
+                    mc.type = 'text/javascript';
+                    mc.async = true;
+                    mc.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://cackle.me/widget.js';
+                    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+                })();
+                </script>
+            {% else %}
+                <div class="grey-text text-center mb-1"><i class="fa fa-ban fa-4x" aria-hidden="true"></i></div>
+                <div class="grey-text text-center">Данный пользователь запретил оставлять комментарии у себя на странице.</div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-lg-4 mt-2 mb-2">
+        {% if user.sb_can_wt_quests %}
+            <div class="card p-3">
+                <ul class="nav nav-tabs md-pills pills-ins" role="tablist">
+                    <li class="nav-item nav_item w-50" id="cv_nv_el">
+                        <a class="nav-link active " data-toggle="tab" href="#panel11" role="tab">Участвовал(а)</a>
+                    </li>
+                    <li class="nav-item nav_item w-50" id="cv_nv_el">
+                        <a class="nav-link" data-toggle="tab" href="#panel12" role="tab">Создал(а)</a>
+                    </li>
+                </ul>
+            <style>
+                @media (max-width: 420px) {
+                  #cv_nv_el{
+                      width:100%!important;
+                      margin-left: 0!important;
+                  }
+                }
+            </style>
+                <div class="tab-content">
+                    <!--Panel 1-->
+                    <div class="tab-pane fade in show active" id="panel11" role="tabpanel">
+                        <br>
+                        {% if pr_quests %}
+                            {% for key, quest in pr_quests.items %}
+                                {% if quest.key <= 1 %}
+                                     <!--Small news-->
+                                    <div class="single-news mb-1">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <!--Image-->
+                                                {% if quest.avatar %}
+                                                    <div class="view overlay hm-white-slight z-depth-1-half mb-1">
+                                                        <img src="{{ quest.avatar.url }}"
+                                                             alt="Minor sample post image">
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                            <!--Excerpt-->
+                                            <div class="col-md-12">
+                                                <p class="mb-0"><strong>{{ quest.end_date_time|date:'d/m/Y' }}</strong></p>
+                                                <a href="{% url 'quest' key %}" style="color: #424242">{{ quest.name }}
+                                                    <i class="fa fa-angle-right"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--/Small news-->
+                                {% endif %}
+                            {% endfor %}
+                            {% if pr_quests.keys|length > 1 %}
+                                <button class="btn-flat float-right" data-toggle="modal" data-target="#allpartquests">
+                                    Посмотреть все
+                                </button>
+                            {% endif %}
+                        {% else %}
+                            <div class="grey-text">К сожалению, данный пользователь не участвовал в квестах.</div>
+                        {% endif %}
+                    </div>
+                    <!--/.Panel 1-->
+
+                    <!--Panel 2-->
+                    <div class="tab-pane fade" id="panel12" role="tabpanel">
+                        <br>
+                        {% if cr_quests %}
+                            {% for key, quest in cr_quests.items %}
+                                {% if quest.key <= 1 %}
+                                     <!--Small news-->
+                                    <div class="single-news mb-1">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <!--Image-->
+                                                {% if quest.avatar %}
+                                                    <div class="view overlay hm-white-slight z-depth-1-half mb-1">
+                                                        <img src="{{ quest.avatar.url }}"
+                                                             alt="Minor sample post image">
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                            <!--Excerpt-->
+                                            <div class="col-md-12">
+                                                <p class="mb-0"><strong>{{ quest.end_date_time|date:'d/m/Y' }}</strong></p>
+                                                <a href="{% url 'quest' key %}" style="color: #424242">{{ quest.name }}
+                                                    <i class="fa fa-angle-right"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--/Small news-->
+                                {% endif %}
+                            {% endfor %}
+                            {% if cr_quests.keys|length > 1 %}
+                                <button class="btn-flat float-right" data-toggle="modal" data-target="#allcreatequests">
+                                    Посмотреть все
+                                </button>
+                            {% endif %}
+                        {% else %}
+                            <div class="grey-text">К сожалению, данный пользователь не создавал квесты.</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="card p-4 mb-2">
+                <div class="grey-text text-center mb-1"><i class="fa fa-ban fa-4x" aria-hidden="true"></i></div>
+                <div class="grey-text text-center">Данный пользователь запретил смотреть квесты, которые он создовал и в которых участвовал.</div>
+            </div>
+        {% endif %}
+    </div>
+    <div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="pswp__bg"></div>
+        <div class="pswp__scroll-wrap">
+            <div class="pswp__container">
+                <div class="pswp__item"></div>
+                <div class="pswp__item"></div>
+                <div class="pswp__item"></div>
+            </div>
+            <div class="pswp__ui pswp__ui--hidden">
+                <div class="pswp__top-bar">
+                    <div class="pswp__counter"></div>
+                    <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                    <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                    <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                    <div class="pswp__preloader">
+                        <div class="pswp__preloader__icn">
+                          <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                    <div class="pswp__share-tooltip"></div>
+                </div>
+                <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button>
+                <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button>
+                <div class="pswp__caption" style="display: none">
+                    <div class="pswp__caption__center"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if user.sb_can_wt_quests %}
+        <div class="modal fade" id="allcreatequests" tabindex="-1" role="dialog"
+             aria-labelledby="allcreatequests" style="padding-right: 0!important;">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content" id="photo_gallery_content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Квесты</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" style="display: -webkit-flex; -webkit-flex-wrap: wrap;display: flex;flex-wrap: wrap;">
+                        <br>
+                        {% for key, quest in cr_quests.items %}
+                             <div class="single-news col-md-6 mb-2">
+                                 <div class="view hm-zoom hm-black-light h-100">
+                                     <a href="{% url 'quest' quest.id %}">
+                                         <img src="{{ quest.avatar.url }}" class="img-fluid" alt="">
+                                         <div class="mask ">
+                                            <p class="tile-title big-title p-2">
+                                                <f style="font-size: 0.95rem">{{ quest.creation_time|date:'d/m/y' }}</f><br>
+                                                «{{ quest.name }}»
+                                            </p>
+                                         </div>
+                                     </a>
+                                 </div>
+                             </div>
+                        {% endfor %}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" id="close_gal">Закрыть</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% if user.id == auth_user.id %}
+        <div class="modal fade" id="givemoney" tabindex="-1" role="dialog"
+             aria-labelledby="givemoney" style="padding-right: 0!important;">
+            <div class="modal-dialog modal-sm" role="document">
+                <div class="modal-content" id="photo_gallery_content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Вывод денег</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <br>                   
+                        <div class="md-form" id="e_purse">
+                            <input type="number" id="purse" name="purse" class="form-control">
+                            <label for="purse">Яндекс кошелёк</label>
+                        </div>
+                        <div class="md-form" id="e_amount">
+                            <input type="number" id="amount" name="amount" class="form-control">
+                            <label for="amount">Сумма</label>
+                        </div>
+                        <div id="money_err" class="text-danger" style="display:none;">У вас недостаточно денег.</div>
+                    </div>
+                    <div class="modal-footer pl-0 pr-0">
+                        <button type="button" class="btn btn-success m-auto" id="trans">Перевести</button>
+                        <button type="button" class="btn btn-primary m-auto" data-dismiss="modal" id="close_gal">Закрыть</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    <script>photousergallery();
+        toastr.options = {
+          "closeButton": false,
+          "debug": false,
+          "newestOnTop": false,
+          "progressBar": false,
+          "positionClass": "toast-top-right",
+          "preventDuplicates": false,
+          "onclick": null,
+          "showDuration": "500",
+          "hideDuration": "1000",
+          "timeOut": "5000",
+          "extendedTimeOut": "1000",
+          "showEasing": "swing",
+          "hideEasing": "linear",
+          "showMethod": "fadeIn",
+          "hideMethod": "fadeOut"
+        }
+        $("#trans").on("click", function(){
+            var purse = $("input[name=purse]").val();
+            var amount = $("input[name=amount]").val();
+            var balance = Number($('m').text());
+            if(purse != "" && amount != 0){
+                $.post('get_money/',{purse:purse, amount:amount}, function(data){
+                    if(data == '1'){                    
+                        $('m').text(balance - amount);
+                        $('#notif').show();
+                        $('#e_amount').removeClass('error');
+                        $('#money_err').css("display","none");
+                        $('#givemoney').modal('hide');
+                        toastr["success"]("Заявка на вывод средст успешно отправлена. Средства поступят на счёт, который вы указали, в течение 24-х часов.");
+                    }
+                    else{
+                        $('#money_err').css("display","block");
+                        $('#e_amount').addClass('error');  
+                    }
+                });
+                $('#e_amount').removeClass('error'); 
+                $('#e_purse').removeClass('error'); 
+            }
+            else{
+                if(purse == ""){
+                    $('#e_purse').addClass('error'); 
+                }
+                else{
+                    $('#e_purse').removeClass('error');
+                }
+                if(amount == 0){
+                    $('#e_amount').addClass('error');  
+                }
+                else{
+                    $('#e_amount').removeClass('error');;
+                }           
+            }
+        });
+    </script>
+    <div class="modal fade" id="allachievements" tabindex="-1" role="dialog"
+         aria-labelledby="allachievements" style="padding-right: 0!important;">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content" id="photo_gallery_content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Достижения</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <br>
+                    {% for user_achievement, score in user_achievements.items %}
+                            <div class="col-md-6 mb-1 float-left">
+                                <div class="card-cascade cascading-admin-card">
+                                    <div class="admin-up">
+                                        <img class="mb-2" src="{{ user_achievement.avatar.url }}"
+                                             style="width: 80px;height: 80px;float:left;">
+                                        <div class="data">
+                                            <h3 style="margin-top: 1.5rem;">{{ score.min_score }} / {{ user_achievement.max_score }}</h3>
+                                        </div>
+                                    </div>
+                                    <div class="card-block pt-0">
+                                        <div class="progress">
+                                            <div class="progress-bar bg-success" role="progressbar" style="width: {{ score.achive_per }}%" aria-valuenow="{{ score.achive_per }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                        <p class="card-text">{{ user_achievement.description }} ({{ score.achive_per }}%)</p>
+                                    </div>
+                                </div>
+                            </div>
+                    {% endfor %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="close_gal">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if user.sb_can_wt_quests %}
+        <div class="modal fade" id="allpartquests" tabindex="-1" role="dialog"
+             aria-labelledby="allpartquests" style="padding-right: 0!important;">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content" id="photo_gallery_content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Квесты</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" style="display: -webkit-flex; -webkit-flex-wrap: wrap;display: flex;flex-wrap: wrap;">
+                        <br>
+                        {% for key, quest in pr_quests.items %}
+                             <div class="single-news col-md-6 mb-2">
+                                 <div class="view hm-zoom hm-black-light h-100">
+                                     <a href="{% url 'quest' quest.id %}">
+                                         <img src="{{ quest.avatar.url }}" class="img-fluid" alt="">
+                                         <div class="mask ">
+                                            <p class="tile-title big-title p-2">
+                                                <f style="font-size: 0.95rem">{{ quest.end_date_time|date:'d/m/y' }}</f><br>
+                                                «{{ quest.name }}»
+                                            </p>
+                                         </div>
+                                     </a>
+                                 </div>
+                             </div>
+                        {% endfor %}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" id="close_gal">Закрыть</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

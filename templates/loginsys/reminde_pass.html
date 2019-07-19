@@ -1,0 +1,54 @@
+{% extends 'loginsys/shab.html' %}
+{% block title %}
+Востановление пароля
+{% endblock %}
+{% block content %}
+<script src='https://www.google.com/recaptcha/api.js'></script>
+    <div class="col-md-6 col-lg-5 mb-2 login-form mx-auto float-none mt-5">
+            <!--Form with header-->
+            <div class="card shadow-none">
+                <div class="card-block">
+
+                    <!--Header-->
+                    <div class="form-header primary-color darken-3">
+                        <h3><i class="fa fa-wrench"></i> Восстановление пароля:</h3>
+                    </div>
+
+                    <!--Body-->
+                    <div id="content_body">
+                        <div class="md-form" id="err_form">
+                            <i class="fa fa-user prefix"></i>
+                            <input type="text" id="form2" name="email"  class="form-control">
+                            <label for="form2">Ваш email</label>
+                        </div>
+                        <div class="m-2 text-center red-text" id="err" style="display:none">Пользователя с таким email не существует.</div>
+                        <div class="text-center">
+                            <script type="text/javascript">
+                                var onSubmit = function(token) {
+                                    email = $('input[name=email]').val();
+                                    
+                                    recaptcha = $('textarea[name="g-recaptcha-response"]').val();
+                                    $.post('../reminde/',{email:email,recaptcha:recaptcha}, function(data){
+                                        if(data != "0"){
+                                             $('#content_body').html(data);
+                                             $("#err").css("display","none");
+                                             $("#err_form").removeClass("error");
+                                        }
+                                        else{
+                                            $("#err").css("display","block");
+                                            $("#err_form").addClass("error");
+                                        }
+                                    })
+                                };
+                            </script>  
+                            <button class="btn btn-primary darken-3 g-recaptcha"
+                                 data-sitekey="6LeUTSsUAAAAAFZMEoProjLIUwnZcr5axeg_KwIB"
+                                 data-callback="onSubmit">Восстановить</button>                            
+                        </div>                        
+                    </div>
+                </div>
+
+            </div>
+            <!--/Form with header-->
+    </div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends 'email/email_base.html' %}
+
+{% block image %}
+<img src="data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTkuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgdmlld0JveD0iMCAwIDYwIDYwIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCA2MCA2MDsiIHhtbDpzcGFjZT0icHJlc2VydmUiIHdpZHRoPSI2NHB4IiBoZWlnaHQ9IjY0cHgiPgo8Zz4KCTxwYXRoIGQ9Ik0zMCwyNmMzLjg2LDAsNy0zLjE0MSw3LTdzLTMuMTQtNy03LTdzLTcsMy4xNDEtNyw3UzI2LjE0LDI2LDMwLDI2eiBNMzAsMTRjMi43NTcsMCw1LDIuMjQzLDUsNXMtMi4yNDMsNS01LDUgICBzLTUtMi4yNDMtNS01UzI3LjI0MywxNCwzMCwxNHoiIGZpbGw9IiNGRkZGRkYiLz4KCTxwYXRoIGQ9Ik0yOS44MjMsNTQuNzU3TDQ1LjE2NCwzMi42YzUuNzU0LTcuNjcxLDQuOTIyLTIwLjI4LTEuNzgxLTI2Ljk4MkMzOS43NjEsMS45OTUsMzQuOTQ1LDAsMjkuODIzLDAgICBzLTkuOTM4LDEuOTk1LTEzLjU2LDUuNjE3Yy02LjcwMyw2LjcwMi03LjUzNSwxOS4zMTEtMS44MDQsMjYuOTUyTDI5LjgyMyw1NC43NTd6IE0xNy42NzcsNy4wMzFDMjAuOTIyLDMuNzg3LDI1LjIzNSwyLDI5LjgyMywyICAgczguOTAxLDEuNzg3LDEyLjE0Niw1LjAzMWM2LjA1LDYuMDQ5LDYuNzk1LDE3LjQzNywxLjU3MywyNC4zOTlMMjkuODIzLDUxLjI0M0wxNi4wODIsMzEuNCAgIEMxMC44ODIsMjQuNDY4LDExLjYyOCwxMy4wOCwxNy42NzcsNy4wMzF6IiBmaWxsPSIjRkZGRkZGIi8+Cgk8cGF0aCBkPSJNNDIuMTE3LDQzLjAwN2MtMC41NS0wLjA2Ny0xLjA0NiwwLjMyNy0xLjExLDAuODc2czAuMzI4LDEuMDQ2LDAuODc2LDEuMTFDNTIuMzk5LDQ2LjIzMSw1OCw0OS41NjcsNTgsNTEuNSAgIGMwLDIuNzE0LTEwLjY1Miw2LjUtMjgsNi41UzIsNTQuMjE0LDIsNTEuNWMwLTEuOTMzLDUuNjAxLTUuMjY5LDE2LjExNy02LjUwN2MwLjU0OC0wLjA2NCwwLjk0LTAuNTYyLDAuODc2LTEuMTEgICBjLTAuMDY1LTAuNTQ5LTAuNTYxLTAuOTQ1LTEuMTEtMC44NzZDNy4zNTQsNDQuMjQ3LDAsNDcuNzM5LDAsNTEuNUMwLDU1LjcyNCwxMC4zMDUsNjAsMzAsNjBzMzAtNC4yNzYsMzAtOC41ICAgQzYwLDQ3LjczOSw1Mi42NDYsNDQuMjQ3LDQyLjExNyw0My4wMDd6IiBmaWxsPSIjRkZGRkZGIi8+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPC9zdmc+Cg==" />
+{% endblock %}
+
+{% block color %}
+#F80
+{% endblock %}
+
+{% block color_2 %}
+#F80
+{% endblock %}
+
+{% block email_content %}
+квест <strong>{{ quest.name }}</strong> успешно создан. Данный квест не виден пользователям, пока вы его не оплатите.
+<div style="width:100%; float:left;margin-top:20px;margin-bottom:10px;"><a href="https://oleggys.ru/quest/payment/{{ quest.id }}/" style="    
+    font-size: .8rem;
+    margin:0 auto;
+    padding: .85rem 2.13rem;
+    margin: 6px;
+    border-radius: 2px;
+    border: 0;
+    -webkit-transition: .2s ease-out;
+    transition: .2s ease-out;
+    white-space: normal!important;
+    word-wrap: break-word;
+    cursor: pointer;-webkit-box-shadow: 0 2px 5px 0 rgba(0,0,0,.16), 0 2px 10px 0 rgba(0,0,0,.12);
+    box-shadow: 0 2px 5px 0 rgba(0,0,0,.16), 0 2px 10px 0 rgba(0,0,0,.12);border: 2px solid #F80;
+    color: #F80!important;
+    background-color: transparent;
+    text-decoration: none;">Оплатить</a></div>
+{% endblock %}

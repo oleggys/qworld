@@ -1,0 +1,45 @@
+{% load staticfiles %}
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+   <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="A front-end template that helps you build fast, modern mobile web apps.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'all/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'all/css/mdb.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'all/css/style.css' %}">
+    <script type="text/javascript" src="{% static 'all/js/jquery-2.2.3.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'all/js/jquery-3.1.1.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'all/js/tether.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'all/js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'all/js/mdb.min.js' %}"></script>
+  </head>
+  <body style="background-color:#fff;">
+    <!--Navbar-->
+    <nav class="navbar navbar-toggleable-md navbar-light shadow-none" >
+        <div class="container pl-4 pr-4">
+            <a class="logo float-left navbar-brand" href="{% url 'index' %}">
+                <strong>qWorld</strong>
+            </a>
+            <div class="collapse navbar-collapse " style="display: block;">
+                <ul class="navbar-nav ml-auto float-right" style="flex-direction: row">
+                    <li class="nav-item mr-2">
+                        <a class="nav-link" href="{% url 'login' %}"><i class="fa fa-sign-in" aria-hidden="true"></i> Вход</a>
+                    </li>
+                    <li class="nav-item ">
+                        <a class="nav-link" href="{% url 'registration' %}"><i class="fa fa-user" aria-hidden="true"></i> Регистрация</a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="row">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+  </body>
+</html>

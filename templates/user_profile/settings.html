@@ -1,0 +1,247 @@
+{% extends 'qworld/base.html' %}
+{% block title %}
+Настройки
+{% endblock %}
+{% load staticfiles %}
+{% block content %}
+    <script type="text/javascript" src="{% static 'all/datepicker/picker.js' %}"></script>
+    <script type="text/javascript" src="{% static 'all/datepicker/picker-date.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'all/datepicker/default.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'all/datepicker/default.date.css' %}">
+    <link rel="stylesheet" href="{% static 'qworld/css/qworldstyle.css' %}">
+    <script>
+        tinymce.init({
+          selector: 'textarea#id_about_user',
+          width:'100%',
+          height: 300,
+          menubar: false,
+          theme: 'modern',
+          plugins: [
+            'advlist autolink lists link preview hr anchor',
+            'searchreplace wordcount visualchars',
+            'nonbreaking contextmenu directionality',
+            'emoticons paste textcolor colorpicker textpattern toc'
+          ],
+          toolbar1: 'undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link',
+          toolbar2: 'preview | forecolor backcolor emoticons',
+          image_advtab: false,
+          content_css: [
+            '//fonts.googleapis.com/css?family=Lato:300,300i,400,400i',
+            '//www.tinymce.com/css/codepen.min.css'
+          ]
+         });
+    </script>
+    <form action="" method="POST" class="settings_form" style="width:100%" enctype='multipart/form-data'>
+        {% csrf_token %}
+        <div class="col-lg-12 mt-2">
+            <div class="card card-block">
+                <div>
+                    <div class="col-lg-4 float-left mb-2">
+                        <img id="settimg" src="{{ auth_user.avatar.url }}" alt="User Photo" class="rounded-circle
+                        contact-avatar my-2 mx-auto
+                        {% if form.avatar.errors or image_error %}
+                            error_image
+                        {% endif %}
+                        " style="height: 110px;width: 110px;">
+                        {% if image_error %}
+                            <div class="text-center red-text">Размер изображения превышает 20Кб</div>
+                        {% endif %}
+                        <div class="text-center">
+                            <div class="file-field" style="width:auto;">
+                                <div class="btn btn-primary file-field_one" style="cursor: pointer">
+                                    <span>Загрузить фотографию</span>
+                                    {{ Changeform.avatar }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            {{ Changeform.sb_can_rt_com }}
+                            <label for="id_sb_can_rt_com">Можно оставлять комментарии на странице</label>
+
+                            {{ Changeform.sb_can_wt_quests }}
+                            <label for="id_sb_can_wt_quests">Можно просматривать квесты, в которых я участвовал(а) или создал(а)</label>
+                        </div>
+                    </div>
+                    <div class="col-lg-8 float-right">
+                        <div class="d-flex flex-row">
+                            <div class="user-level pr-2">
+                                {{ auth_user.level }}
+                            </div>
+                            <div style="width:100%;">
+                                <div class="grey-text">
+                                    {{ auth_user.level_points }} / 1000
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" style="width:{{ level_points }}%"
+                                         aria-valuenow="{{ level_points }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <!--First column-->
+                            <div class="col-md-6">
+                                {% if Changeform.username.errors %}
+                                    <div class="md-form error_input">
+                                        {{ Changeform.username }}
+                                        <label for="id_username" data-error="wrong" data-success="right">Логин</label>
+                                    </div>
+                                {% else %}
+                                    <div class="md-form">
+                                        {{ Changeform.username }}
+                                        <label for="id_username" data-error="wrong" data-success="right">Логин</label>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <!--Second column-->
+                            <div class="col-md-6">
+                                <div class="md-form">
+                                    {{ Changeform.firstname }}
+                                    <label for="id_firstname" data-error="wrong" data-success="right">Ваше имя</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="m-4"></div>
+                        <div class="row">
+                            <!--First column-->
+                            <div class="col-md-6">
+                                <div class="md-form">
+                                    {{ Changeform.lastname }}
+                                    <label for="id_lastname" data-error="wrong" data-success="right">Ваша фамилия</label>
+                                </div>
+                            </div>
+                            <!--Second column-->
+                            <div class="col-md-6">
+                                <div class="md-form">
+                                    {{ Changeform.middlename }}
+                                    <label for="id_middlename" data-error="wrong" data-success="right">Ваше отчество</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <!--First column-->
+                            <div class="col-md-6">
+                                <div class="md-form">
+                                    {{ Changeform.phone }}
+                                    <label for="id_phone" data-error="wrong" data-success="right">Ваша номер</label>
+                                </div>
+                            </div>
+                            <!--Second column-->
+                            <div class="col-md-6">
+                                <div class="md-form">
+                                    {{ Changeform.date_of_birth }}
+                                    <label for="id_date_of_birth" data-error="wrong" data-success="right">Ваша дата рождения</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="m-4"></div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                {% if Changeform.email.errors %}
+                                    <div class="md-form error_input">
+                                        {{ Changeform.email }}
+                                        <label for="id_username" data-error="wrong" data-success="right">Ваш email</label>
+                                    </div>
+                                {% else %}
+                                    <div class="md-form">
+                                        {{ Changeform.email }}
+                                        <label for="id_username" data-error="wrong" data-success="right">Ваш email</label>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <!--Second column-->
+                            <div class="col-md-6">
+                                {% if form.password.errors %}
+                                    <div class="md-form error_input">
+                                        {{ Changeform.password }}
+                                        <label for="form82" data-error="wrong" data-success="right">Ваш пароль</label>
+                                    </div>
+                                {% else %}
+                                    <div class="md-form">
+                                        {{ Changeform.password }}
+                                        <label for="form82" data-error="wrong" data-success="right">Ваш пароль</label>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="fixed-action-btn text-right" style="bottom: 45px; right: 24px;">
+                            <button class="btn-floating btn-large btn-primary
+                            hoverable" data-toggle="tooltip" data-placement="left"
+                                    title="Сохранить изменения"><i class="fa fa-save"></i></button>
+                        </div>
+                        <script>
+                            $(function () {
+                              $('[data-toggle="tooltip"]').tooltip()
+                            })
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 mt-2 float-right">
+            <div class="card card-block">
+                <h4 style="color:#424242" >Фотографии:</h4>
+                {% if user_photos %}
+                    <div class="grey-text mb-1" style="font-size:0.9rem;">Кликните на фотографии, которые хотите удалить.</div>
+                    <div class="w-100 foto_select">
+                        {% for user_photo in user_photos %}
+                            <input id="{{ user_photo.id }}" name="photo{{ user_photo.id }}" type="checkbox">
+                            <label for="{{ user_photo.id }}" class="float-left mb-1 col-md-6" style="padding-left: 0;padding-right: 0">
+                                <img src="{{ user_photo.photo.url }}">
+                            </label>
+                        {% endfor %}
+                    </div>
+                    <div class="grey-text" style="font-size:0.9rem;margin-top: 0.2rem;">Или загрузите новые.</div>
+                    <div id="download_img">
+
+                    </div>
+                    <div class="file-field" style="width:auto;">
+                        <div class="file-field_one text-center hovergrey p-1" >
+                            <span >
+                                <?xml version="1.0" encoding="iso-8859-1"?>
+                                <!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+                                <svg height="20px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                     viewBox="0 0 42 42" style="enable-background:new 0 0 42 42; margin-top: 0.5rem;" xml:space="preserve">
+                                <polygon points="42,20 22,20 22,0 20,0 20,20 0,20 0,22 20,22 20,42 22,42 22,22 42,22 "/>
+                                </svg>
+                            </span>
+                            <input name="photos" type="file" id="photos" multiple>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="grey-text mb-1" style="font-size:0.9rem;">К сожалению, вы не загрузили фотографий, но вы можете сделать это сейчас.</div>
+                    <div class="file-field" style="width:auto;">
+                        <div class="file-field_one text-center hovergrey p-1" >
+                            <span>
+                                <?xml version="1.0" encoding="iso-8859-1"?>
+                                <!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+                                <svg height="20px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                     viewBox="0 0 42 42" style="enable-background:new 0 0 42 42; margin-top: 0.5rem;" xml:space="preserve">
+                                <polygon points="42,20 22,20 22,0 20,0 20,20 0,20 0,22 20,22 20,42 22,42 22,22 42,22 "/>
+                                </svg>
+                            </span>
+                            <input name="photos" type="file" id="photos" multiple>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-lg-8 mt-2 float-left mb-4">
+            <div class="card">
+                {{ Changeform.about_user }}
+            </div>
+        </div>
+    </form>
+    <script>
+    $(document).ready(function () {
+        $("input#id_avatar").change(function() {
+             renderImage(this.files[0])
+        });
+        $("input#photos").change(function() {
+             for(var k=0; k < this.files.length ;k++){
+                 renderImageM(this.files[k])
+             }
+        });
+    })
+    </script>
+    <script>mask();</script>
+{% endblock %}

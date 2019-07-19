@@ -1,0 +1,28 @@
+{% extends 'qworld/base.html' %}
+{% block title %}
+Квест - {{ quest.name }}
+{% endblock %}
+{% block content %}
+        <div class="col-lg-12 mt-2">
+            <div class="card p-4 text-center">
+                <div class="text-primary mb-1" style="opacity: 0.6; font-size: 2rem">
+                    <i class="fa fa-ban fa-5x" aria-hidden="true"></i>
+                </div>
+                <div style="opacity: 0.5; font-size: 1.2rem" class="mb-1">
+                    В данный момент квест <strong>{{ quest.name }}</strong> идёт.<br>
+                    Квест закончится: <strong>{{ quest.end_date_time }}</strong>.<br>
+                    В данный момент вы можете создать новый квест или принять принять участие в других различных квестах.
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card p-0 text-center mt-2">
+                <a href="{% url 'create' %}" class="btn btn-primary m-0">Создать</a>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card p-0 text-center mt-2 mb-2">
+                <a href="{% url 'found' %}" class="btn btn-primary m-0">Найти</a>
+            </div>
+        </div>   
+{% endblock %}

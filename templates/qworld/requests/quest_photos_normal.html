@@ -1,0 +1,15 @@
+<div class="my-gallery" itemscope >
+    {% for photo in photos %}
+        <figure itemprop="associatedMedia" itemscope class="col-md-6 float-left" >
+          <a href="{{ photo.photo.url }}" itemprop="contentUrl" class="w-100"
+             data-size="{{ photo.photo.width }}x{{ photo.photo.height }}">
+              <img src="{{ photo.photo.url }}" class="w-100"
+                   itemprop="thumbnail" alt="Image description" />
+          </a>
+        </figure>
+    {% endfor %}
+</div>
+<script>photousergallery()</script>
+<script>
+    $("button[name='save_gallery']").remove();
+</script>

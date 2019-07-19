@@ -1,0 +1,53 @@
+{% extends 'qworld/base.html' %}
+{% block title %}
+Правила
+{% endblock %}
+
+{% block content %}
+    <div class="col-lg-12">
+        <div class="card p-4 w-100 mt-2">
+            <div class="text-center">
+                <h1 class="section-heading mb-2">Правила</h1>
+                <p class="section-description mb-2">Как и у любой платформы, у нас есть правила</p>
+            </div>
+            <ul class="ul_list pl-4 pr-4 text-primary">
+                <li>
+                    ytkmpz nj b nj 1
+                </li>
+                <li>
+                    ytkmpz nj b nj 2
+                </li>
+                <li>
+                    ytkmpz nj b nj 3
+                </li>
+            </ul>
+        </div>
+        <div class="card p-4 w-100 mt-2">
+            <div class="text-center">
+                <h1 class="section-heading mb-2">Часто задаваемые вопросы</h1>
+                <p class="section-description mb-3">Сдесь вы можете найти ответы на различные </p>
+            </div>
+            <div class="accordion" id="accordion" role="tablist" aria-multiselectable="true">
+                {% for question in questions %}
+                    <div class="card">
+                        <div class="card-header" role="tab" id="heading{{ question.id }}">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#question{{ question.id }}"
+                               aria-expanded="false"
+                               aria-controls="question{{ question.id }}" class="collapsed">
+                                <h5 class="mb-0">
+                                {{ question.question }} <i class="fa fa-angle-down rotate-icon"></i>
+                            </h5>
+                            </a>
+                        </div>
+                        <div id="question{{ question.id }}" class="collapse" role="tabpanel"
+                             aria-labelledby="heading{{ question.id }}">
+                            <div class="card-block">
+                                {{ question.text }}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

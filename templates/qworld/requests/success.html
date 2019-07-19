@@ -1,0 +1,19 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Успех</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>
+    </div>
+    <div class="modal-body text-center">
+        <div class="green-text mb-1" style="opacity: 0.6; font-size: 2rem">
+            <i class="fa fa-check-circle-o fa-5x" aria-hidden="true"></i>
+        </div>
+        <div style="opacity: 0.5; font-size: 1.2rem" class="mb-1">
+            Оплата за квест <strong>{{ quest.name }}</strong> прошла успешно.
+        </div>
+    </div>
+    <div class="modal-footer">
+            <a href="{% url 'quest' quest.id %}" class="btn btn-dark-green  m-0">Перейти к квесту</a>
+    </div>
+</div>

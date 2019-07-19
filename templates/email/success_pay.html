@@ -1,0 +1,60 @@
+{% extends 'email/email_base.html' %}
+
+{% block image %}
+<img src="data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTguMS4xLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgdmlld0JveD0iMCAwIDYxMS45OTYgNjExLjk5NiIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgNjExLjk5NiA2MTEuOTk2OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgd2lkdGg9IjY0cHgiIGhlaWdodD0iNjRweCI+CjxnPgoJPGc+CgkJPHBhdGggZD0iTTU4OC42MywxMTMuMTkzTDIxMy44MTIsMzMuODcxYy0xNS44NTgtMy4zNTUtMzEuNTc2LDYuODc2LTM0LjkzMSwyMi43MzRsLTcuMTIxLDQ1Ljc2Mmw0MzIuNDc3LDkxLjUxOWw3LjEyMS00NS43NjIgICAgQzYxNC43MTMsMTMyLjI3Miw2MDQuNDg4LDExNi41NDksNTg4LjYzLDExMy4xOTN6IiBmaWxsPSIjRkZGRkZGIi8+CgkJPHBhdGggZD0iTTQzMS4wMDksMjAzLjU5MWMtNC4zNzgtMTUuNzY2LTIwLjg1NC0yNS4wODUtMzYuNjE1LTIwLjcxNEwzMjMuMjQsMjAyLjYzbC0xNjcuNzQyLTM1LjVsLTE4LjQ0OCw4Ny4xNjVMMjEuNzg2LDI4Ni4yODcgICAgYy0xNS43Niw0LjM3Mi0yNS4wNzksMjAuODQ4LTIwLjcwOCwzNi42MDlsNjQuOTU4LDIzNC4wNzhjNC4zNzgsMTUuNzYsMjAuODU1LDI1LjA4NSwzNi42MTUsMjAuNzA4bDM3Mi42MDgtMTAzLjQwMyAgICBjMTUuNzYtNC4zNzgsMjUuMDc5LTIwLjg0OCwyMC43MDgtMzYuNjE1bC0xMS4xNS00MC4xODRsNDEuNzg5LDguODM1YzE1Ljg1OCwzLjM2MSwzMS41NzYtNi44NywzNC45MzEtMjIuNzI4bDI2LjQzOS0xMjQuOTM3ICAgIEw0MzcuNDUsMjI2Ljc5N0w0MzEuMDA5LDIwMy41OTF6IE00NzQuMDQsMzIyLjU1OWw5LjIxNS00My41NTJjMS4zODQtNi41MjEsNy44NS0xMC43MjcsMTQuMzctOS4zNWw0My41NTIsOS4yMjEgICAgYzYuNTI3LDEuMzg0LDEwLjczMyw3Ljg0Myw5LjM1NiwxNC4zN2wtOS4yMTUsNDMuNTUyYy0xLjM4NCw2LjUyMS03Ljg0OSwxMC43MzMtMTQuMzcsOS4zNWwtNDMuNTUyLTkuMjE1ICAgIEM0NzYuODYzLDMzNS41NDYsNDcyLjY1NiwzMjkuMDgsNDc0LjA0LDMyMi41NTl6IE0yOC4yNywzMDkuNjQ2bDEwMy4xMTUtMjguNjA2bDI0My4yOTktNjcuNTE3bDI2LjE4MS03LjI3NCAgICBjMC40NzgtMC4xMjksMC45NTUtMC4xOSwxLjQyMS0wLjE5YzIuMSwwLDQuNjExLDEuMzc4LDUuMzQ1LDQuMDE3bDMuMDc0LDExLjA3bDkuNjMxLDM0LjcwNEwzNy4xNDgsMzYyLjE4NmwtMTIuNzA1LTQ1Ljc2OCAgICBDMjMuNjQ3LDMxMy41NDYsMjUuMzk5LDMxMC40NDIsMjguMjcsMzA5LjY0NnogTTQ3Mi42MDEsNDQ0LjE0MWMwLjQ5LDEuNzc2LTAuMDI0LDMuMjQ1LTAuNTQ1LDQuMTY0ICAgIGMtMC41MTQsMC45MTgtMS41MDYsMi4xMTktMy4yODIsMi42MDhMOTYuMTczLDU1NC4zMTZjLTAuNDcxLDAuMTI5LTAuOTU1LDAuMTk2LTEuNDIxLDAuMTk2Yy0yLjEsMC00LjYxMS0xLjM4NC01LjM0NS00LjAyMyAgICBMNTEuNTE5LDQxMy45NTVsMzgzLjE4OC0xMDYuMzQybDIzLjM3MSw4NC4yMDhMNDcyLjYwMSw0NDQuMTQxeiIgZmlsbD0iI0ZGRkZGRiIvPgoJCTxwYXRoIGQ9Ik0xNTYuMzc5LDQ1My40ODRjLTEuNzg4LTYuNDI5LTguNDk5LTEwLjIyNS0xNC45MjgtOC40NDNsLTQzLjUxNSwxMi4wOGMtNi40MjMsMS43ODItMTAuMjI1LDguNDk5LTguNDM3LDE0LjkyOCAgICBsMTIuMDc0LDQzLjUwOWMxLjc4OCw2LjQyOSw4LjQ5OSwxMC4yMjUsMTQuOTI4LDguNDM3bDQzLjUxNS0xMi4wNzRjNi40MjktMS43ODIsMTAuMjI1LTguNDk5LDguNDQzLTE0LjkyOEwxNTYuMzc5LDQ1My40ODR6IiBmaWxsPSIjRkZGRkZGIi8+Cgk8L2c+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPC9zdmc+Cg==" />
+{% endblock %}
+
+{% block color %}
+#007E33
+{% endblock %}
+
+{% block color_2 %}
+#007E33
+{% endblock %}
+
+{% block email_content %}
+Вы успешно оплатили квест <strong>{{ quest.name }}</strong>. Ваш платёжный номер: <font style="color:#007E33;"><strong>{{ payment_num }}</strong></font>.
+<div style="width:100%"><h4 style="margin-bottom:0;">Информация о квесте</h4></div>
+<div style="width:100%;line-height:15px; display: -webkit-flex; -webkit-flex-wrap: wrap;display: flex;flex-wrap: wrap;">
+    <div style="width:49%;margin-right:1%;">
+    <h4 style="color:#424242; margin-bottom:1rem;">Место встречи:</h4>
+    <p style="margin-top:0;"> Город: <strong style="line-height:20px;">
+        {{ quest.town }}
+    </strong></p>
+    <p> Адрес: <strong style="line-height:20px;">
+        {{ quest.meeting_point }}
+    </strong></p>
+    <p> Дата: <strong>
+        {{ quest.meeting_date_time.date|date }}
+    </strong></p>
+    <p> Время: <strong>
+        {{ quest.meeting_date_time.time }}
+    </strong></p></div>
+    <div style="width:49%;margin-right:1%;">
+    <h4 style="color:#424242;margin-bottom:1rem;">Продолжительность:</h4>
+    <p style="margin-top:0;">Начало: <strong style="line-height:20px;">
+        {{ quest.begin_date_time }}
+    </strong></p>
+    <p> Конец: <strong style="line-height:20px;">
+        {{ quest.end_date_time }}
+    </strong></p>
+    </div>
+{% if quest.have_group %}
+   <div style="width:100%"><h4>Группы</h4>
+   {% for group in groups %}
+       <div style="width:100%; line-height:10px;margin-bottom:30px;">
+           <p style="margin-top:0;"> Название: <strong style="line-height:20px;">
+               {{ group.name }}
+           </strong></p>
+           <p> Логин админа: <strong style="line-height:20px;">
+               {{ group.admin_login }}
+           </strong></p>
+           <p> Пароль админа: <strong style="line-height:20px;">
+               {{ group.admin_password }}
+           </strong></p>
+       </div>
+   {% endfor %}
+{% endif %}
+</div>
+<div style="width:100%;margin-bottom:20px;">Если у вас возникли сложности с квестом обратитесь в <a href="" style="color:#007E33;">службу поддержки</a>.</div>
+{% endblock %}

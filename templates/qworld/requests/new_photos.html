@@ -1,0 +1,34 @@
+<div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content" id="photo_gallery_content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Фотогалерея квеста</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+            </button>
+        </div>
+        <div class="modal-body" id="all_quest_photo">
+            <div class="my-gallery" itemscope >
+                {% for photo in photos %}
+                    <figure itemprop="associatedMedia" itemscope class="col-md-6 float-left" >
+                      <a href="{{ photo.photo.url }}" itemprop="contentUrl" class="w-100"
+                         data-size="{{ photo.photo.width }}x{{ photo.photo.height }}">
+                          <img src="{{ photo.photo.url }}" class="w-100"
+                               itemprop="thumbnail" alt="Image description" />
+                      </a>
+                    </figure>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="modal-footer">
+            {% if quest.author_id == auth_user.id  %}
+                <div class="float-left ml-2 mr-auto quest_photos_sett" id="checkbox_w_all">
+                    <input type="checkbox" name="quest_sett_photo" id="qsphoto">
+                    <label for="qsphoto"><i class="fa fa-cog fa-2x"></i></label>
+                </div>
+                <script>qpsettings()</script>
+            {% endif %}
+            <button type="button" class="btn btn-primary" data-dismiss="modal" id="close_gal">Закрыть</button>
+        </div>
+    </div>
+</div>
+<script>photousergallery()</script>
